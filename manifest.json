@@ -1,0 +1,20 @@
+{
+  "name": "Smart Life Planner – Douanes & Full Stack",
+  "short_name": "Life Planner",
+  "description": "Planificateur intelligent pour service douanier 12h (cycle 4 jours) et étudiant Développement Full Stack.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b1120",
+  "theme_color": "#3b82f6",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
