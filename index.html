@@ -1,10 +1,2791 @@
-<!doctype html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="Planning personnel, professionnel et académique adapté au cycle de travail douanier."><title>Smart Life Planner</title><link rel="stylesheet" href="src/styles.css"></head><body>
-<div class="app-shell"><aside class="sidebar" id="sidebar"><div class="brand"><div class="brand-mark">S</div><div><h1>Smart Life Planner</h1><small>Organise ton rythme</small></div></div><nav class="nav"><button data-page="dashboard" class="active"><span class="ico">▦</span>Tableau de bord</button><button data-page="work"><span class="ico">◷</span>Planning professionnel</button><button data-page="school"><span class="ico">▤</span>Planning académique</button><button data-page="personal"><span class="ico">✦</span>Développement personnel</button><button data-page="settings"><span class="ico">⚙</span>Paramètres</button></nav><div class="sidebar-bottom"><div class="mini-profile"><div class="avatar">FS</div><div><b>Full Stack Student</b><small>Douanes · Études · Vie perso</small></div></div></div></aside>
-<main class="main"><header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="icon-btn mobile-menu" id="mobile-menu">☰</button><div><div class="eyebrow" id="date-label"></div><h2 id="page-title">Tableau de bord</h2></div></div><div class="top-actions"><button class="icon-btn" id="theme-toggle" title="Basculer le thème">☼</button><button class="btn primary hide-mobile" id="quick-add">＋ Ajouter une activité</button></div></header>
-<section class="page active" id="page-dashboard"><div class="grid stats" id="dashboard-stats"></div><div class="grid dashboard-grid"><div class="grid"><div class="panel"><div class="panel-head"><div><h3>Prochain service</h3><p>Compte à rebours et informations</p></div><button class="text-link" onclick="document.querySelector('[data-page=work]').click()">Planning →</button></div><div id="next-shift"></div><div class="panel-head" style="margin:16px 0 10px"><h3>Prochain cours</h3><button class="text-link" onclick="document.querySelector('[data-page=school]').click()">Voir les cours →</button></div><div id="next-class"></div></div><div class="panel"><div class="panel-head"><div><h3>Activités du jour</h3><p>Les prochaines étapes de ta journée</p></div><button class="text-link" id="add-activity">＋ Ajouter</button></div><div class="timeline" id="today-list"></div></div></div><div class="grid"><div class="panel"><div class="panel-head"><div><h3>Objectifs hebdomadaires</h3><p>Progression sur la semaine en cours</p></div><span class="pill">Cette semaine</span></div><div class="goals" id="goal-list"></div></div><div class="panel"><div class="panel-head"><div><h3>Vue rapide du calendrier</h3><p>Choisis une date pour voir ses détails</p></div><button class="text-link" onclick="document.querySelector('[data-page=work]').click()">Planning →</button></div><div class="calendar-head"><button class="small-btn" id="calendar-prev">‹</button><h3 id="calendar-month"></h3><select class="field" id="calendar-mode" aria-label="Vue du calendrier"><option value="month">Mois</option><option value="year">Année</option></select><button class="small-btn" id="calendar-next">›</button></div><div class="calendar-grid" id="calendar-grid"></div><div style="margin-top:14px"><b style="font-size:12px" id="selected-day-title"></b><div id="selected-day-detail"></div></div></div></div></div></section>
-<section class="page" id="page-work"><div class="section-title"><div><h3>Cycle professionnel</h3><p>Cycle de 5 jours calculé depuis ta référence</p></div><button class="btn primary" id="generate-suggestions">✦ Générer des suggestions</button></div><div class="grid stats" id="work-summary"></div><div class="panel"><div class="panel-head"><div><h3>Services et repos</h3><p>Modifie un jour exceptionnel si ton service est échangé, renforcé ou remplacé.</p></div></div><div id="work-table"></div></div></section>
-<section class="page" id="page-school"><div class="section-title"><div><h3>Planning académique</h3><p>Cours fixes : lundi et mardi, 19h00–21h00</p></div></div><div class="panel" style="margin-bottom:16px"><div class="panel-head"><div><h3>Rattrapages</h3><p>Une tâche est créée après une absence ou un conflit.</p></div></div><div id="catchup-list"></div></div><div class="panel"><div class="toolbar"><select class="field" id="school-filter"><option value="all">Tous les cours</option><option value="planned">Prévue</option><option value="present">Présent</option><option value="absent">Absent</option><option value="caughtup">Rattrapage effectué</option><option value="conflict">Conflit</option><option value="afterNight">Après service de nuit</option></select></div><div id="school-table"></div></div></section>
-<section class="page" id="page-personal"><div class="section-title"><div><h3>Développement personnel</h3><p>Apprentissage, sport et activités individuelles</p></div><button class="btn primary" id="add-activity-page">＋ Nouvelle activité</button></div><div class="panel" style="margin-bottom:16px"><div class="panel-head"><div><h3>Objectifs de la semaine</h3><p>Français, anglais, IA, sport et formation</p></div></div><div class="goals" id="personal-goals"></div></div><div class="panel"><div class="toolbar"><select class="field" id="activity-filter"><option value="all">Toutes catégories</option><option value="language">Langues</option><option value="ai">Intelligence artificielle</option><option value="sport">Sport</option><option value="study">Full Stack</option><option value="recovery">Récupération</option><option value="personal">Personnel</option></select><select class="field" id="activity-status-filter"><option value="all">Tous les statuts</option><option value="planned">Prévue</option><option value="done">Terminée</option></select></div><div id="activity-table"></div></div></section>
-<section class="page" id="page-settings"><div class="section-title"><div><h3>Paramètres</h3><p>Référence de ton cycle, apparence et sauvegardes</p></div></div><div class="grid settings-grid"><div class="panel"><div class="panel-head"><h3>Référence du cycle douanier</h3></div><form id="settings-form" class="form-grid"><div class="form-field"><label for="ref-date">Date de référence</label><input class="field" id="ref-date" type="date" required></div><div class="form-field"><label for="ref-phase">Service / phase à cette date</label><select class="field" id="ref-phase"><option value="day">Service de jour</option><option value="restBeforeNight">Repos avant nuit</option><option value="night">Service de nuit</option><option value="recovery">Récupération</option><option value="rest2">Deuxième repos</option></select></div><div class="form-field"><label for="theme-select">Apparence</label><select class="field" id="theme-select"><option value="light">Mode clair</option><option value="dark">Mode sombre</option></select></div><div class="form-field" style="align-self:end"><button class="btn primary" type="submit">Enregistrer et recalculer</button></div><p class="hint" style="grid-column:1/-1">La date de référence désigne le jour auquel la phase sélectionnée s'applique. Le cycle de 5 jours se répète à partir de cette date. Les cours de l'institut ne sont jamais déplacés.</p></form></div><div class="panel"><div class="panel-head"><h3>Sauvegarde locale</h3></div><p class="hint">Les données sont enregistrées automatiquement dans le stockage local de ce navigateur. Exporte régulièrement une copie JSON pour éviter toute perte lors d'un changement d'appareil ou de navigateur.</p><div class="toolbar" style="margin-top:18px"><button class="btn primary" id="export-data">Exporter les données</button><button class="btn" id="import-data">Importer une sauvegarde</button><input type="file" id="import-file" accept="application/json" hidden></div><p class="hint">Cette version fonctionne sans compte et sans serveur. Les données restent sur cet appareil.</p></div></div></section>
-</main></div>
-<div class="modal-backdrop" id="activity-modal"><div class="modal"><h3 id="modal-title">Nouvelle activité</h3><form class="modal-form" id="activity-form"><input id="activity-id" type="hidden"><div class="form-field"><label for="activity-title">Nom de l'activité</label><input class="field" id="activity-title" required placeholder="Ex. Révision JavaScript"></div><div class="form-grid"><div class="form-field"><label for="activity-date">Date</label><input class="field" id="activity-date" type="date" required></div><div class="form-field"><label for="activity-start">Heure de début (facultative)</label><input class="field" id="activity-start" type="time"></div><div class="form-field"><label for="activity-duration">Durée (minutes)</label><input class="field" id="activity-duration" type="number" min="5" max="720" step="5" value="60" required></div><div class="form-field"><label for="activity-category">Catégorie</label><select class="field" id="activity-category"><option value="language">Langue</option><option value="ai">Intelligence artificielle</option><option value="sport">Sport</option><option value="study">Formation Full Stack</option><option value="recovery">Récupération</option><option value="personal">Personnel</option></select></div></div><div class="form-field"><label for="activity-detail">Notes</label><textarea class="field" id="activity-detail" rows="3" placeholder="Détails ou objectif de la séance"></textarea></div><div class="modal-actions"><button type="button" class="btn" id="cancel-modal">Annuler</button><button type="submit" class="btn primary">Enregistrer</button></div></form><button id="close-modal" class="icon-btn" style="position:absolute;top:18px;right:18px">×</button></div></div><div class="toast" id="toast"></div><script type="module" src="src/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Life Planner – Douanes & Full Stack</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <meta name="theme-color" content="#3b82f6" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <style>
+    /* ==========================================================================
+       1. VARIABLES & THÈMES (CLAIR / SOMBRE)
+       ========================================================================== */
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Couleurs sémantiques des services & statuts */
+      --shift-jour: #f59e0b;
+      --shift-jour-bg: rgba(245, 158, 11, 0.14);
+      --shift-nuit: #6366f1;
+      --shift-nuit-bg: rgba(99, 102, 241, 0.15);
+      --shift-repos1: #0ea5e9;
+      --shift-repos1-bg: rgba(14, 165, 233, 0.14);
+      --shift-repos2: #10b981;
+      --shift-repos2-bg: rgba(16, 185, 129, 0.14);
+      --shift-conge: #14b8a6;
+      --shift-conge-bg: rgba(20, 184, 166, 0.15);
+      --shift-renfort: #f43f5e;
+      --shift-renfort-bg: rgba(244, 63, 94, 0.15);
+
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-soft: rgba(59, 130, 246, 0.14);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.14);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.14);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+    }
+
+    [data-theme="dark"] {
+      --bg-app: #0b1120;
+      --bg-surface: #111827;
+      --bg-card: #172033;
+      --bg-elevated: #1e293b;
+      --bg-hover: #263349;
+      --border: #2a374e;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    [data-theme="light"] {
+      --bg-app: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-elevated: #f8fafc;
+      --bg-hover: #e2e8f0;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --shadow: 0 8px 24px -8px rgba(15, 23, 42, 0.08);
+    }
+
+    /* ==========================================================================
+       2. RESET & BASE
+       ========================================================================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-app);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    button, input, select, textarea {
+      font-family: inherit;
+      color: inherit;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ==========================================================================
+       3. LAYOUT PRINCIPAL
+       ========================================================================== */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 268px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      transition: transform var(--transition);
+    }
+    .brand {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      display: grid; place-items: center;
+      color: #fff; font-weight: 800; font-size: 1rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+    .brand-text h1 { font-size: 0.98rem; font-weight: 700; letter-spacing: -0.01em; }
+    .brand-text span { font-size: 0.74rem; color: var(--text-muted); display: block; }
+
+    .nav-menu {
+      padding: 14px 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+    }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 11px 14px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: left;
+    }
+    .nav-btn:hover { background: var(--bg-elevated); color: var(--text-main); }
+    .nav-btn.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .nav-btn .badge-pill {
+      margin-left: auto;
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .sidebar-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content */
+    .main-area {
+      flex: 1;
+      margin-left: 268px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mobile-menu-btn {
+      display: none;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .countdown-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-content {
+      padding: 24px;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .view-section { display: none; animation: fadeIn 0.2s ease; }
+    .view-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ==========================================================================
+       4. COMPOSANTS UI RÉUTILISABLES
+       ========================================================================== */
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .section-header h2 { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.02em; }
+    .section-header p { font-size: 0.88rem; color: var(--text-muted); margin-top: 2px; }
+
+    .grid { display: grid; gap: 16px; }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-2-1 { grid-template-columns: 1.45fr 1fr; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .card-title { font-size: 1rem; font-weight: 600; }
+    .card-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .kpi-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi-value { font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .kpi-foot { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Boutons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--bg-elevated); border-color: var(--border); color: var(--text-main); }
+    .btn-secondary:hover { background: var(--bg-hover); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: var(--danger-soft); color: var(--danger); border-color: rgba(239, 68, 68, 0.25); }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--text-muted); }
+    .btn-ghost:hover { background: var(--bg-elevated); color: var(--text-main); }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-jour { background: var(--shift-jour-bg); color: var(--shift-jour); }
+    .badge-nuit { background: var(--shift-nuit-bg); color: var(--shift-nuit); }
+    .badge-repos1 { background: var(--shift-repos1-bg); color: var(--shift-repos1); }
+    .badge-repos2 { background: var(--shift-repos2-bg); color: var(--shift-repos2); }
+    .badge-conge { background: var(--shift-conge-bg); color: var(--shift-conge); }
+    .badge-renfort { background: var(--shift-renfort-bg); color: var(--shift-renfort); }
+    .badge-success { background: var(--success-soft); color: var(--success); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); }
+    .badge-danger { background: var(--danger-soft); color: var(--danger); }
+    .badge-info { background: var(--primary-soft); color: var(--primary); }
+
+    /* Formulaires */
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .form-label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .form-control:focus { border-color: var(--primary); }
+    .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+    /* Progress bars */
+    .progress-wrap { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .progress-top { display: flex; justify-content: space-between; font-size: 0.83rem; font-weight: 500; }
+    .progress-track {
+      height: 9px;
+      background: var(--bg-elevated);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--primary);
+      transition: width 0.35s ease;
+    }
+
+    /* Alertes */
+    .alert {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+      border: 1px solid transparent;
+    }
+    .alert-danger { background: var(--danger-soft); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
+    .alert-warning { background: var(--warning-soft); border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
+    .alert-info { background: var(--primary-soft); border-color: rgba(59, 130, 246, 0.3); color: var(--primary); }
+    .alert-success { background: var(--success-soft); border-color: rgba(16, 185, 129, 0.3); color: var(--success); }
+
+    /* ==========================================================================
+       5. CALENDRIER MENSUEL & ANNUEL
+       ========================================================================== */
+    .cal-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .cal-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 6px;
+      text-align: center;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .cal-cell {
+      min-height: 98px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    .cal-cell:hover { border-color: var(--primary); transform: translateY(-1px); }
+    .cal-cell.other-month { opacity: 0.42; }
+    .cal-cell.is-today { border: 2px solid var(--primary); box-shadow: 0 0 0 2px var(--primary-soft); }
+    .cal-cell-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .cal-pill {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cal-dots {
+      display: flex;
+      gap: 4px;
+      margin-top: auto;
+      flex-wrap: wrap;
+    }
+
+    /* Vue Annuelle */
+    .year-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .mini-month {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+    }
+    .mini-month h4 {
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      text-align: center;
+      color: var(--text-main);
+    }
+    .mini-days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 3px;
+    }
+    .mini-day {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       6. LISTES, TABLES & ACTIVITÉS
+       ========================================================================== */
+    .item-list { display: flex; flex-direction: column; gap: 10px; }
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      flex-wrap: wrap;
+    }
+    .item-row.done { opacity: 0.68; }
+    .item-row.done .item-title { text-decoration: line-through; }
+    .item-main { display: flex; align-items: flex-start; gap: 11px; flex: 1; min-width: 220px; }
+    .item-check {
+      width: 20px; height: 20px;
+      accent-color: var(--success);
+      cursor: pointer;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .item-title { font-size: 0.92rem; font-weight: 600; }
+    .item-meta { font-size: 0.78rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 8px; margin-top: 3px; }
+    .item-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { font-size: 0.76rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
+    tr:hover td { background: var(--bg-elevated); }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+      align-items: center;
+    }
+    .filter-bar .form-control { width: auto; min-width: 150px; }
+
+    .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--border); margin-bottom: 16px; flex-wrap: wrap; }
+
+    /* ==========================================================================
+       7. MODALS & TOASTS
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .modal-header h3 { font-size: 1.12rem; font-weight: 700; }
+
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 80;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 360px;
+    }
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      font-size: 0.85rem;
+      animation: fadeIn 0.2s ease;
+    }
+    .toast.success { border-left-color: var(--success); }
+    .toast.danger { border-left-color: var(--danger); }
+    .toast.warning { border-left-color: var(--warning); }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 35;
+    }
+
+    /* ==========================================================================
+       8. RESPONSIVE MOBILE & TABLETTE
+       ========================================================================== */
+    @media (max-width: 1120px) {
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-2-1 { grid-template-columns: 1fr; }
+      .year-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 860px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .main-area { margin-left: 0; }
+      .mobile-menu-btn { display: inline-flex; }
+      .grid-2, .form-row { grid-template-columns: 1fr; }
+      .year-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cal-cell { min-height: 76px; padding: 5px; }
+    }
+    @media (max-width: 540px) {
+      .page-content { padding: 14px; }
+      .topbar { padding: 10px 14px; }
+      .grid-4, .grid-3, .year-grid { grid-template-columns: 1fr; }
+      .cal-cell { min-height: 64px; }
+      .cal-pill { font-size: 0.6rem; padding: 2px 3px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="app-shell">
+  <!-- ======================== SIDEBAR ======================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">SLP</div>
+      <div class="brand-text">
+        <h1>Smart Life Planner</h1>
+        <span>Douanes 12h & Full Stack</span>
+      </div>
+    </div>
+
+    <nav class="nav-menu" id="navMenu">
+      <button class="nav-btn active" data-view="dashboard">
+        <span>📊</span> Tableau de bord
+      </button>
+      <button class="nav-btn" data-view="work">
+        <span>🛡️</span> Planning professionnel
+      </button>
+      <button class="nav-btn" data-view="academic">
+        <span>🎓</span> Planning académique
+        <span class="badge-pill" id="navCatchupBadge" style="display:none;">0</span>
+      </button>
+      <button class="nav-btn" data-view="personal">
+        <span>⚡</span> Développement personnel
+      </button>
+      <button class="nav-btn" data-view="settings">
+        <span>⚙️</span> Paramètres & Cycle
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="sidebarRefInfo">Cycle : 4 jours (12h)</div>
+      <div style="margin-top:4px;">Sauvegarde locale active ✓</div>
+    </div>
+  </aside>
+
+  <!-- ======================== MAIN AREA ======================== -->
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">☰</button>
+        <div class="topbar-status">
+          <span id="topbarTodayBadge" class="badge badge-info">Aujourd'hui</span>
+          <div class="countdown-chip">
+            <span>⏱️</span>
+            <span id="topbarCountdown">Calcul...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" id="themeToggleBtn" title="Changer de thème">🌙 Mode</button>
+        <button class="btn btn-primary btn-sm" id="quickAddActivityBtn">+ Activité</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+
+      <!-- =========================================================
+           VUE 1 : TABLEAU DE BORD
+           ========================================================= -->
+      <section class="view-section active" id="view-dashboard">
+        <div class="section-header">
+          <div>
+            <h2>Tableau de bord</h2>
+            <p id="dashboardDateSubtitle">Vue synthétique de votre journée, vos quarts douaniers et vos objectifs.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="dashAutoPlanBtn">✨ Planifier ma semaine</button>
+          </div>
+        </div>
+
+        <div id="dashboardAlerts"></div>
+
+        <!-- KPIs principaux -->
+        <div class="grid grid-4" style="margin-bottom:18px;">
+          <div class="kpi-card">
+            <span class="kpi-label">Prochain service</span>
+            <span class="kpi-value" id="kpiNextShiftTitle">—</span>
+            <span class="kpi-foot" id="kpiNextShiftSub">—</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Prochain cours (19h-21h)</span>
+            <span class="kpi-value" id="kpiNextCourseTitle">—</span>
+            <span class="kpi-foot" id="kpiNextCourseSub">—</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Apprentissage (Semaine)</span>
+            <span class="kpi-value" id="kpiLearningHours">0h / 10h</span>
+            <span class="kpi-foot" id="kpiSportCount">Sport : 0 / 2 séances</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Cours à rattraper</span>
+            <span class="kpi-value" id="kpiCatchupCount">0</span>
+            <span class="kpi-foot" id="kpiDoneTodayFoot">Terminées aujourd'hui : 0</span>
+          </div>
+        </div>
+
+        <div class="grid grid-2-1">
+          <!-- Colonne gauche : Aujourd'hui -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Activités d'aujourd'hui</h3>
+                <span class="card-sub" id="todayRuleHint">Règle du jour appliquée</span>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openActivityModal()">+ Ajouter</button>
+            </div>
+            <div id="todayActivitiesList" class="item-list"></div>
+
+            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:14px;">
+              <div class="card-header" style="margin-bottom:10px;">
+                <h3 class="card-title" style="font-size:0.95rem;">Activités terminées récemment</h3>
+                <span class="badge badge-success" id="doneCountBadge">0 terminées</span>
+              </div>
+              <div id="todayCompletedList" class="item-list"></div>
+            </div>
+          </div>
+
+          <!-- Colonne droite : Objectifs hebdomadaires & Rattrapages -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Objectifs hebdomadaires</h3>
+                  <span class="card-sub" id="dashWeekRange">—</span>
+                </div>
+                <span class="badge badge-info" id="dashWeeklyPct">0%</span>
+              </div>
+              <div id="dashWeeklyBars"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Rattrapages en attente</h3>
+                <button class="btn btn-ghost btn-sm" onclick="switchView('academic')">Voir tout →</button>
+              </div>
+              <div id="dashCatchupList" class="item-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           VUE 2 : PLANNING PROFESSIONNEL (DOUANES)
+           ========================================================= -->
+      <section class="view-section" id="view-work">
+        <div class="section-header">
+          <div>
+            <h2>Planning professionnel – Douanes (12h)</h2>
+            <p>Cycle : Jour (09h-21h) → 24h repos + Nuit (21h-09h) → Repos 1 → Repos 2.</p>
+          </div>
+          <div class="tabs" style="margin-bottom:0; border-bottom:none;">
+            <button class="btn btn-primary btn-sm" id="workModeMonthBtn">Calendrier Mensuel</button>
+            <button class="btn btn-secondary btn-sm" id="workModeYearBtn">Vue Annuelle</button>
+          </div>
+        </div>
+
+        <div class="grid grid-4" style="margin-bottom:16px;" id="workStatsGrid"></div>
+
+        <!-- Calendrier mensuel -->
+        <div class="card" id="workMonthCard">
+          <div class="cal-toolbar">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <button class="btn btn-secondary btn-sm" id="prevMonthBtn">◀</button>
+              <h3 id="calMonthTitle" style="min-width:170px; text-align:center; text-transform:capitalize;">—</h3>
+              <button class="btn btn-secondary btn-sm" id="nextMonthBtn">▶</button>
+              <button class="btn btn-ghost btn-sm" id="todayMonthBtn">Aujourd'hui</button>
+            </div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">
+              Cliquez sur un jour pour gérer congés, absences, renforts ou notes de service.
+            </div>
+          </div>
+
+          <div class="cal-legend">
+            <span class="badge badge-jour">☀️ Jour (09h-21h)</span>
+            <span class="badge badge-nuit">🌙 Nuit (21h-09h)</span>
+            <span class="badge badge-repos1">🛌 Repos 1 (Post-nuit)</span>
+            <span class="badge badge-repos2">🌿 Repos 2 (Complet)</span>
+            <span class="badge badge-conge">🏖️ Congé / Abs.</span>
+            <span class="badge badge-renfort">🚨 Renfort</span>
+            <span class="badge badge-info">🎓 Cours 19h-21h</span>
+          </div>
+
+          <div class="cal-weekdays">
+            <div>Lun</div><div>Mar</div><div>Mer</div><div>Jeu</div><div>Ven</div><div>Sam</div><div>Dim</div>
+          </div>
+          <div class="cal-grid" id="workMonthGrid"></div>
+        </div>
+
+        <!-- Calendrier annuel -->
+        <div class="card" id="workYearCard" style="display:none;">
+          <div class="cal-toolbar">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <button class="btn btn-secondary btn-sm" id="prevYearBtn">◀</button>
+              <h3 id="calYearTitle" style="min-width:100px; text-align:center;">2026</h3>
+              <button class="btn btn-secondary btn-sm" id="nextYearBtn">▶</button>
+            </div>
+            <div class="cal-legend" style="margin-bottom:0;">
+              <span class="badge badge-jour">Jour</span>
+              <span class="badge badge-nuit">Nuit</span>
+              <span class="badge badge-repos1">Repos 1</span>
+              <span class="badge badge-repos2">Repos 2</span>
+              <span class="badge badge-conge">Congé</span>
+              <span class="badge badge-renfort">Renfort</span>
+            </div>
+          </div>
+          <div class="year-grid" id="workYearGrid"></div>
+        </div>
+
+        <!-- Journal des services -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Journal des services & Dérogations</h3>
+              <span class="card-sub">Historique de vos notes de poste, congés, absences et renforts</span>
+            </div>
+          </div>
+          <div id="shiftJournalList" class="item-list"></div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           VUE 3 : PLANNING ACADÉMIQUE (FULL STACK)
+           ========================================================= -->
+      <section class="view-section" id="view-academic">
+        <div class="section-header">
+          <div>
+            <h2>Formation Full Stack – Institut d'Informatique</h2>
+            <p>Cours fixes immuables : Lundi (19h00–21h00) & Mardi (19h00–21h00). Détection automatique des conflits.</p>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <label class="form-label" style="margin:0;">Mois :</label>
+            <input type="month" id="academicMonthFilter" class="form-control" style="width:auto;" />
+          </div>
+        </div>
+
+        <div class="grid grid-4" style="margin-bottom:16px;" id="academicKpis"></div>
+
+        <div class="grid grid-2-1">
+          <!-- Liste des séances -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Calendrier des séances & Conflits</h3>
+              <select id="academicConflictFilter" class="form-control" style="width:auto;">
+                <option value="ALL">Tous les statuts</option>
+                <option value="CONFLIT">En conflit uniquement</option>
+                <option value="APRES_NUIT">Après service de nuit</option>
+                <option value="SANS_CONFLIT">Sans conflit</option>
+                <option value="A_RATTRAPER">À rattraper</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Service douane</th>
+                    <th>Compatibilité</th>
+                    <th>Présence</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="academicCoursesBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Rattrapages & Progression Full Stack -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Cours manqués & Rattrapages</h3>
+                <span class="badge badge-danger" id="missedCoursesBadge">0</span>
+              </div>
+              <div id="academicMissedList" class="item-list"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Progression Full Stack</h3>
+                  <span class="card-sub" id="fsProgressSub">Modules techniques</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="addFsModuleBtn">+ Module</button>
+              </div>
+              <div id="fsModulesList" class="item-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           VUE 4 : DÉVELOPPEMENT PERSONNEL & PLANIFICATEUR
+           ========================================================= -->
+      <section class="view-section" id="view-personal">
+        <div class="section-header">
+          <div>
+            <h2>Développement personnel & Planning intelligent</h2>
+            <p>Objectifs : Français (2h/sem), Anglais (2h/sem), IA (2h/sem), Sport (2 séances/sem) + Rattrapages.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="generateWeekPlanBtn">🤖 Générer planning de la semaine</button>
+            <button class="btn btn-primary" onclick="openActivityModal()">+ Nouvelle activité</button>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-bottom:16px;">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Objectifs de la semaine sélectionnée</h3>
+                <span class="card-sub" id="personalWeekLabel">—</span>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary btn-sm" id="prevWeekBtn">◀ Sem.</button>
+                <button class="btn btn-secondary btn-sm" id="currWeekBtn">Actuelle</button>
+                <button class="btn btn-secondary btn-sm" id="nextWeekBtn">Sem. ▶</button>
+              </div>
+            </div>
+            <div id="personalWeeklyProgress"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Objectifs mensuels cumulés</h3>
+                <span class="card-sub" id="personalMonthLabel">—</span>
+              </div>
+              <span class="badge badge-info">Base : 4 semaines</span>
+            </div>
+            <div id="personalMonthlyProgress"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Activités planifiées & Suivi</h3>
+          </div>
+          <div class="filter-bar">
+            <input type="date" id="filterActDate" class="form-control" title="Filtrer par date" />
+            <select id="filterActCat" class="form-control">
+              <option value="ALL">Toutes catégories</option>
+              <option value="FRANCAIS">Français</option>
+              <option value="ANGLAIS">Anglais</option>
+              <option value="IA">Intelligence Artificielle</option>
+              <option value="SPORT">Sport</option>
+              <option value="RATTRAPAGE">Rattrapage Full Stack</option>
+              <option value="PERSO">Autre / Personnel</option>
+            </select>
+            <select id="filterActStatus" class="form-control">
+              <option value="ALL">Tous statuts</option>
+              <option value="PREVU">Prévues</option>
+              <option value="TERMINE">Terminées</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" id="resetActFiltersBtn">Réinitialiser filtres</button>
+          </div>
+
+          <div id="personalActivitiesList" class="item-list"></div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           VUE 5 : PARAMÈTRES, CYCLE DE RÉFÉRENCE & TESTS
+           ========================================================= -->
+      <section class="view-section" id="view-settings">
+        <div class="section-header">
+          <div>
+            <h2>Paramètres & Configuration du cycle</h2>
+            <p>Configurez votre date de référence douanière, sauvegardez vos données ou lancez les tests de cohérence.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Cycle de travail douanier (Date de référence)</h3>
+            </div>
+            <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:14px;">
+              Le planning est calculé automatiquement à partir de cette date et du statut correspondant.
+            </p>
+            <form id="referenceForm">
+              <div class="form-group">
+                <label class="form-label" for="refDateInput">Date de référence</label>
+                <input type="date" id="refDateInput" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="refPhaseInput">Service à cette date</label>
+                <select id="refPhaseInput" class="form-control">
+                  <option value="0">1. Service de jour (09h00 – 21h00)</option>
+                  <option value="1">2. Repos 24h puis Service de nuit à 21h00 (21h00 – 09h00)</option>
+                  <option value="2">3. Première journée de repos (Post-nuit, fin à 09h00)</option>
+                  <option value="3">4. Deuxième journée de repos (Repos complet)</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Enregistrer & Recalculer le planning</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Données, Sauvegarde & Tests</h3>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+              <button class="btn btn-secondary" id="exportJsonBtn">⬇️ Exporter JSON</button>
+              <label class="btn btn-secondary" style="cursor:pointer;">
+                ⬆️ Importer JSON
+                <input type="file" id="importJsonInput" accept=".json" style="display:none;" />
+              </label>
+              <button class="btn btn-danger" id="resetAllDataBtn">🗑️ Réinitialiser tout</button>
+            </div>
+
+            <div style="border-top:1px solid var(--border); padding-top:14px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong style="font-size:0.9rem;">Tests automatisés (Dates, Cycle & Conflits)</strong>
+                <button class="btn btn-primary btn-sm" id="runTestsBtn">▶ Lancer les tests</button>
+              </div>
+              <div id="testResultsBox" style="font-size:0.82rem; color:var(--text-muted);">
+                Cliquez sur "Lancer les tests" pour vérifier mathématiquement le cycle de 4 jours, les conflits Lundi/Mardi et la protection des heures de travail.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- =========================================================
+     MODAL : AJOUTER / MODIFIER UNE ACTIVITÉ
+     ========================================================= -->
+<div class="modal-backdrop" id="activityModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="activityModalTitle">Planifier une activité</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('activityModal')">✕</button>
+    </div>
+    <form id="activityForm">
+      <input type="hidden" id="actIdInput" />
+      <input type="hidden" id="actLinkedCourseInput" />
+
+      <div id="actValidationWarning"></div>
+
+      <div class="form-group">
+        <label class="form-label" for="actTitleInput">Titre de l'activité</label>
+        <input type="text" id="actTitleInput" class="form-control" placeholder="Ex : Grammaire française / Séance Cardio" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="actCatInput">Catégorie</label>
+          <select id="actCatInput" class="form-control">
+            <option value="FRANCAIS">Français (Objectif 2h/sem)</option>
+            <option value="ANGLAIS">Anglais (Objectif 2h/sem)</option>
+            <option value="IA">Intelligence Artificielle (2h/sem)</option>
+            <option value="SPORT">Sport (2 séances/sem)</option>
+            <option value="RATTRAPAGE">Rattrapage Full Stack</option>
+            <option value="PERSO">Autre / Personnel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="actDateInput">Date</label>
+          <input type="date" id="actDateInput" class="form-control" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="actStartInput">Heure début</label>
+          <input type="time" id="actStartInput" class="form-control" value="10:00" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="actEndInput">Heure fin</label>
+          <input type="time" id="actEndInput" class="form-control" value="11:00" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="actNotesInput">Notes / Contenu</label>
+        <textarea id="actNotesInput" class="form-control" rows="2" placeholder="Chapitre, exercices, objectif précis..."></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('activityModal')">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- =========================================================
+     MODAL : DÉTAIL DU JOUR (CONGÉS, RENFORTS, JOURNAL)
+     ========================================================= -->
+<div class="modal-backdrop" id="dayDetailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="dayDetailTitle">Détail du jour</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('dayDetailModal')">✕</button>
+    </div>
+
+    <div id="dayDetailSummary" style="margin-bottom:14px;"></div>
+
+    <form id="dayOverrideForm">
+      <input type="hidden" id="dayDetailDateInput" />
+      <div class="form-group">
+        <label class="form-label" for="dayOverrideSelect">Statut professionnel / Dérogation</label>
+        <select id="dayOverrideSelect" class="form-control">
+          <option value="NORMAL">Cycle automatique normal</option>
+          <option value="CONGE">Congé (Repos validé)</option>
+          <option value="ABSENCE_TRAVAIL">Absence professionnelle</option>
+          <option value="RENFORT_JOUR">Renfort – Service de jour (09h00–21h00)</option>
+          <option value="RENFORT_NUIT">Renfort – Service de nuit (21h00–09h00)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="dayJournalNoteInput">Journal de service / Note personnelle</label>
+        <textarea id="dayJournalNoteInput" class="form-control" rows="3" placeholder="Ex : Poste calme, passage consigne à 21h, heures supplémentaires..."></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; gap:8px; margin-top:14px; flex-wrap:wrap;">
+        <button type="button" class="btn btn-secondary" id="dayAddActivityShortcut">+ Ajouter activité ce jour</button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('dayDetailModal')">Fermer</button>
+          <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ============================================================================
+   SMART LIFE PLANNER – MOTEUR PRINCIPAL
+   ============================================================================ */
+(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'smart_life_planner_v1';
+
+  /* ---------- Utilitaires de dates strictement sans dérive DST ---------- */
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function toYMD(dateObj) {
+    return `${dateObj.getFullYear()}-${pad2(dateObj.getMonth() + 1)}-${pad2(dateObj.getDate())}`;
+  }
+
+  function parseYMD(ymd) {
+    const [y, m, d] = ymd.split('-').map(Number);
+    return { y, m, d };
+  }
+
+  function addDays(ymd, delta) {
+    const { y, m, d } = parseYMD(ymd);
+    const dt = new Date(Date.UTC(y, m - 1, d + delta));
+    return `${dt.getUTCFullYear()}-${pad2(dt.getUTCMonth() + 1)}-${pad2(dt.getUTCDate())}`;
+  }
+
+  function diffDays(ymdFrom, ymdTo) {
+    const a = parseYMD(ymdFrom);
+    const b = parseYMD(ymdTo);
+    const utcA = Date.UTC(a.y, a.m - 1, a.d);
+    const utcB = Date.UTC(b.y, b.m - 1, b.d);
+    return Math.round((utcB - utcA) / 86400000);
+  }
+
+  function mod(n, m) {
+    return ((n % m) + m) % m;
+  }
+
+  function getDayOfWeekMonFirst(ymd) {
+    const { y, m, d } = parseYMD(ymd);
+    const jsDay = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+    return jsDay === 0 ? 7 : jsDay;
+  }
+
+  function getMondayOfWeek(ymd) {
+    const dow = getDayOfWeekMonFirst(ymd);
+    return addDays(ymd, -(dow - 1));
+  }
+
+  function formatDateFR(ymd, withWeekday = true) {
+    const { y, m, d } = parseYMD(ymd);
+    const dt = new Date(y, m - 1, d);
+    return dt.toLocaleDateString('fr-FR', {
+      weekday: withWeekday ? 'short' : undefined,
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  function timeToMin(hhmm) {
+    const [h, m] = hhmm.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function minToHoursText(minutes) {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m === 0 ? `${h}h` : `${h}h${pad2(m)}`;
+  }
+
+  function uid() {
+    return 'id_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+  }
+
+  function escapeHTML(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ---------- Données par défaut & Persistance LocalStorage ---------- */
+  const TODAY_YMD = toYMD(new Date());
+
+  const DEFAULT_FS_MODULES = [
+    { id: 'fs1', title: 'HTML5, CSS3 & Responsive Design', progress: 100 },
+    { id: 'fs2', title: 'JavaScript ES6+, DOM & Asynchrone', progress: 70 },
+    { id: 'fs3', title: 'React / Frontend Moderne', progress: 35 },
+    { id: 'fs4', title: 'Bases de données SQL & Modélisation', progress: 50 },
+    { id: 'fs5', title: 'Backend API REST (Node.js / PHP)', progress: 25 }
+  ];
+
+  function getDefaultState() {
+    return {
+      theme: 'dark',
+      referenceDate: TODAY_YMD,
+      referencePhase: 0,
+      overrides: {},
+      shiftNotes: {},
+      courseStatuses: {},
+      activities: [],
+      fsModules: JSON.parse(JSON.stringify(DEFAULT_FS_MODULES))
+    };
+  }
+
+  let state = loadState();
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return getDefaultState();
+      const parsed = JSON.parse(raw);
+      return {
+        ...getDefaultState(),
+        ...parsed,
+        overrides: parsed.overrides || {},
+        shiftNotes: parsed.shiftNotes || {},
+        courseStatuses: parsed.courseStatuses || {},
+        activities: Array.isArray(parsed.activities) ? parsed.activities : [],
+        fsModules: Array.isArray(parsed.fsModules) && parsed.fsModules.length ? parsed.fsModules : JSON.parse(JSON.stringify(DEFAULT_FS_MODULES))
+      };
+    } catch (e) {
+      console.error('Erreur de chargement LocalStorage:', e);
+      return getDefaultState();
+    }
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  /* ---------- UI State ---------- */
+  const uiState = {
+    currentView: 'dashboard',
+    workMode: 'month',
+    calYear: new Date().getFullYear(),
+    calMonth: new Date().getMonth(),
+    academicMonth: TODAY_YMD.slice(0, 7),
+    selectedWeekMonday: getMondayOfWeek(TODAY_YMD)
+  };
+
+  /* ============================================================================
+     MOTEUR DU CYCLE DOUANIER & INTERVALLES OCCUPÉS
+     ============================================================================ */
+  const PHASE_META = {
+    0: { key: 'JOUR', label: 'Service de Jour', short: 'Jour 09h-21h', badge: 'badge-jour', color: '#f59e0b', hours: 12 },
+    1: { key: 'NUIT', label: 'Repos 24h + Service de Nuit', short: 'Nuit 21h-09h', badge: 'badge-nuit', color: '#6366f1', hours: 12 },
+    2: { key: 'REPOS_1', label: 'Repos 1 (Post-Nuit)', short: 'Repos 1 (Post-nuit)', badge: 'badge-repos1', color: '#0ea5e9', hours: 0 },
+    3: { key: 'REPOS_2', label: 'Repos 2 (Repos Complet)', short: 'Repos 2 (Complet)', badge: 'badge-repos2', color: '#10b981', hours: 0 }
+  };
+
+  function getBaseCyclePhase(ymd) {
+    const delta = diffDays(state.referenceDate, ymd);
+    return mod(Number(state.referencePhase) + delta, 4);
+  }
+
+  function getDayShiftInfo(ymd) {
+    const basePhase = getBaseCyclePhase(ymd);
+    const override = state.overrides[ymd] || 'NORMAL';
+
+    const prevYmd = addDays(ymd, -1);
+    const prevBase = getBaseCyclePhase(prevYmd);
+    const prevOverride = state.overrides[prevYmd] || 'NORMAL';
+
+    const prevHadNightShift =
+      (prevOverride === 'NORMAL' && prevBase === 1) ||
+      prevOverride === 'RENFORT_NUIT';
+
+    let effectiveType = PHASE_META[basePhase].key;
+    let label = PHASE_META[basePhase].label;
+    let short = PHASE_META[basePhase].short;
+    let badge = PHASE_META[basePhase].badge;
+    let color = PHASE_META[basePhase].color;
+    let shiftHoursToday = PHASE_META[basePhase].hours;
+
+    if (override === 'CONGE') {
+      effectiveType = 'CONGE';
+      label = 'Congé';
+      short = 'Congé';
+      badge = 'badge-conge';
+      color = '#14b8a6';
+      shiftHoursToday = 0;
+    } else if (override === 'ABSENCE_TRAVAIL') {
+      effectiveType = 'ABSENCE_TRAVAIL';
+      label = 'Absence travail';
+      short = 'Absence';
+      badge = 'badge-conge';
+      color = '#14b8a6';
+      shiftHoursToday = 0;
+    } else if (override === 'RENFORT_JOUR') {
+      effectiveType = 'RENFORT_JOUR';
+      label = 'Renfort Jour (09h-21h)';
+      short = 'Renfort Jour';
+      badge = 'badge-renfort';
+      color = '#f43f5e';
+      shiftHoursToday = 12;
+    } else if (override === 'RENFORT_NUIT') {
+      effectiveType = 'RENFORT_NUIT';
+      label = 'Renfort Nuit (21h-09h)';
+      short = 'Renfort Nuit';
+      badge = 'badge-renfort';
+      color = '#f43f5e';
+      shiftHoursToday = 12;
+    }
+
+    const workIntervals = [];
+    if (prevHadNightShift) {
+      workIntervals.push({ start: 0, end: 9 * 60, reason: 'Fin du service de nuit (00h00–09h00)' });
+    }
+    if (effectiveType === 'JOUR' || effectiveType === 'RENFORT_JOUR') {
+      workIntervals.push({ start: 9 * 60, end: 21 * 60, reason: `${label} (09h00–21h00)` });
+    }
+    if (effectiveType === 'NUIT' || effectiveType === 'RENFORT_NUIT') {
+      workIntervals.push({ start: 21 * 60, end: 24 * 60, reason: `${label} (21h00–00h00)` });
+    }
+
+    const startsDayShift = (effectiveType === 'JOUR' || effectiveType === 'RENFORT_JOUR');
+    const startsNightShift = (effectiveType === 'NUIT' || effectiveType === 'RENFORT_NUIT');
+
+    return {
+      ymd,
+      basePhase,
+      override,
+      effectiveType,
+      label,
+      short,
+      badge,
+      color,
+      shiftHoursToday,
+      prevHadNightShift,
+      startsDayShift,
+      startsNightShift,
+      workIntervals
+    };
+  }
+
+  function getShiftStatusAt(nowDate = new Date()) {
+    const today = toYMD(nowDate);
+    const nowMs = nowDate.getTime();
+    const candidates = [];
+
+    for (let i = -1; i <= 30; i++) {
+      const d = addDays(today, i);
+      const info = getDayShiftInfo(d);
+      const p = parseYMD(d);
+
+      if (info.startsDayShift) {
+        const start = new Date(p.y, p.m - 1, p.d, 9, 0, 0, 0).getTime();
+        const end = new Date(p.y, p.m - 1, p.d, 21, 0, 0, 0).getTime();
+        candidates.push({ type: info.label, short: info.short, ymd: d, start, end, rangeText: '09h00 – 21h00', badge: info.badge });
+      }
+      if (info.startsNightShift) {
+        const start = new Date(p.y, p.m - 1, p.d, 21, 0, 0, 0).getTime();
+        const nextP = parseYMD(addDays(d, 1));
+        const end = new Date(nextP.y, nextP.m - 1, nextP.d, 9, 0, 0, 0).getTime();
+        candidates.push({ type: info.label, short: info.short, ymd: d, start, end, rangeText: '21h00 – 09h00', badge: info.badge });
+      }
+    }
+
+    const active = candidates.find(c => nowMs >= c.start && nowMs < c.end);
+    const next = candidates.find(c => c.start > nowMs);
+    return { active, next, todayInfo: getDayShiftInfo(today) };
+  }
+
+  function formatDurationCountdown(ms) {
+    if (ms <= 0) return '00m 00s';
+    const totalSec = Math.floor(ms / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+    if (days > 0) return `${days}j ${pad2(hours)}h ${pad2(mins)}m ${pad2(secs)}s`;
+    return `${pad2(hours)}h ${pad2(mins)}m ${pad2(secs)}s`;
+  }
+
+  /* ============================================================================
+     MOTEUR ACADÉMIQUE & CONFLITS (LUNDI & MARDI 19H00 - 21H00)
+     ============================================================================ */
+  function isFixedCourseDay(ymd) {
+    const dow = getDayOfWeekMonFirst(ymd);
+    return dow === 1 || dow === 2;
+  }
+
+  function evaluateCourseForDate(ymd) {
+    if (!isFixedCourseDay(ymd)) return null;
+
+    const shift = getDayShiftInfo(ymd);
+    const dow = getDayOfWeekMonFirst(ymd);
+    const dayName = dow === 1 ? 'Lundi' : 'Mardi';
+    const status = state.courseStatuses[ymd] || 'PREVU';
+
+    let compatibility = 'SANS_CONFLIT';
+    let compatLabel = 'Cours sans conflit';
+    let compatBadge = 'badge-success';
+    let hasConflict = false;
+
+    if (shift.startsDayShift) {
+      compatibility = 'CONFLIT';
+      compatLabel = 'Conflit (Service de jour 09h-21h)';
+      compatBadge = 'badge-danger';
+      hasConflict = true;
+    } else if (shift.startsNightShift) {
+      compatibility = 'CONFLIT_TRANSITION';
+      compatLabel = 'Conflit (Prise de nuit à 21h00)';
+      compatBadge = 'badge-danger';
+      hasConflict = true;
+    } else if (shift.prevHadNightShift || shift.effectiveType === 'REPOS_1') {
+      compatibility = 'APRES_NUIT';
+      compatLabel = 'Après service de nuit (Vigilance)';
+      compatBadge = 'badge-warning';
+      hasConflict = false;
+    }
+
+    const isPendingCatchup = (status === 'ABSENT') || (hasConflict && status !== 'PRESENT' && status !== 'RATTRAPAGE_EFFECTUE');
+
+    return {
+      ymd,
+      dayName,
+      timeRange: '19h00 – 21h00',
+      shift,
+      status,
+      compatibility,
+      compatLabel,
+      compatBadge,
+      hasConflict,
+      isPendingCatchup
+    };
+  }
+
+  function getCoursesInMonth(yearMonth) {
+    const [y, m] = yearMonth.split('-').map(Number);
+    const daysInMonth = new Date(y, m, 0).getDate();
+    const list = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const ymd = `${y}-${pad2(m)}-${pad2(d)}`;
+      const course = evaluateCourseForDate(ymd);
+      if (course) list.push(course);
+    }
+    return list;
+  }
+
+  function getNextCourse(fromYmd = TODAY_YMD) {
+    for (let i = 0; i <= 14; i++) {
+      const d = addDays(fromYmd, i);
+      const c = evaluateCourseForDate(d);
+      if (c) {
+        if (i === 0 && new Date().getHours() >= 21) continue;
+        return c;
+      }
+    }
+    return null;
+  }
+
+  function getAllPendingCatchups() {
+    const map = new Map();
+    for (let i = -45; i <= 14; i++) {
+      const d = addDays(TODAY_YMD, i);
+      const c = evaluateCourseForDate(d);
+      if (!c) continue;
+      const isPastOrTodayConflict = c.hasConflict && d <= TODAY_YMD && c.status !== 'PRESENT' && c.status !== 'RATTRAPAGE_EFFECTUE';
+      if (c.status === 'ABSENT' || isPastOrTodayConflict) {
+        map.set(d, c);
+      }
+    }
+    Object.keys(state.courseStatuses).forEach(d => {
+      if (state.courseStatuses[d] === 'ABSENT') {
+        const c = evaluateCourseForDate(d);
+        if (c) map.set(d, c);
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.ymd.localeCompare(b.ymd));
+  }
+
+  /* ============================================================================
+     VALIDATION HORAIRE & RÈGLES D'ORGANISATION
+     ============================================================================ */
+  function validateActivitySlot(ymd, startTime, endTime, category, ignoreActivityId = null) {
+    const sMin = timeToMin(startTime);
+    const eMin = timeToMin(endTime);
+    if (isNaN(sMin) || isNaN(eMin) || eMin <= sMin) {
+      return { valid: false, level: 'danger', message: "L'heure de fin doit être postérieure à l'heure de début." };
+    }
+
+    const shift = getDayShiftInfo(ymd);
+    for (const w of shift.workIntervals) {
+      if (sMin < w.end && eMin > w.start) {
+        return {
+          valid: false,
+          level: 'danger',
+          message: `Interdit : chevauchement avec votre service douanier (${w.reason}).`
+        };
+      }
+    }
+
+    const course = evaluateCourseForDate(ymd);
+    if (course && !course.hasConflict && course.status !== 'ABSENT') {
+      if (sMin < 21 * 60 && eMin > 19 * 60) {
+        return {
+          valid: false,
+          level: 'danger',
+          message: `Conflit avec le cours fixe Full Stack (${course.dayName} 19h00–21h00).`
+        };
+      }
+    }
+
+    const overlapAct = state.activities.find(a =>
+      a.id !== ignoreActivityId &&
+      a.date === ymd &&
+      sMin < timeToMin(a.endTime) &&
+      eMin > timeToMin(a.startTime)
+    );
+    if (overlapAct) {
+      return {
+        valid: false,
+        level: 'warning',
+        message: `Attention : chevauchement avec "${overlapAct.title}" (${overlapAct.startTime}–${overlapAct.endTime}).`
+      };
+    }
+
+    if (shift.prevHadNightShift || shift.effectiveType === 'REPOS_1') {
+      if (sMin < 15 * 60 + 30) {
+        return {
+          valid: true,
+          level: 'warning',
+          message: "Conseil récupération : après un service de nuit, préservez votre sommeil jusqu'à 15h30."
+        };
+      }
+      if (category === 'SPORT') {
+        return {
+          valid: true,
+          level: 'warning',
+          message: "Conseil : évitez le sport intensif le jour de sortie de nuit, privilégiez Repos 2."
+        };
+      }
+    }
+
+    if (shift.startsNightShift) {
+      if (category === 'SPORT' && eMin > 13 * 60) {
+        return {
+          valid: true,
+          level: 'warning',
+          message: "Avant service de nuit : évitez les activités fatigantes l'après-midi et préservez votre sommeil."
+        };
+      }
+      if (eMin > 14 * 60 && sMin < 20 * 60) {
+        return {
+          valid: true,
+          level: 'warning',
+          message: "Avant service de nuit : créneau recommandé pour la sieste/sommeil préparatoire (14h–20h)."
+        };
+      }
+    }
+
+    if (shift.startsDayShift) {
+      if ((eMin - sMin) > 45) {
+        return {
+          valid: true,
+          level: 'info',
+          message: "Jour de garde 12h : privilégiez le repos et les activités très courtes (< 45 min)."
+        };
+      }
+    }
+
+    return { valid: true, level: 'ok', message: '' };
+  }
+
+  /* ============================================================================
+     PLANIFICATEUR HEBDOMADAIRE INTELLIGENT
+     ============================================================================ */
+  function generateSmartWeekPlan(mondayYmd) {
+    const weekDays = Array.from({ length: 7 }, (_, i) => addDays(mondayYmd, i));
+    const weekSet = new Set(weekDays);
+    const existingWeekActs = state.activities.filter(a => weekSet.has(a.date));
+
+    function sumMinutesFor(cat) {
+      return existingWeekActs
+        .filter(a => a.category === cat)
+        .reduce((acc, a) => acc + Math.max(0, timeToMin(a.endTime) - timeToMin(a.startTime)), 0);
+    }
+    function countSessionsFor(cat) {
+      return existingWeekActs.filter(a => a.category === cat).length;
+    }
+
+    const tasksToSchedule = [];
+
+    const scheduledCatchupCourses = new Set(
+      state.activities.filter(a => a.category === 'RATTRAPAGE' && a.linkedCourseDate).map(a => a.linkedCourseDate)
+    );
+    getAllPendingCatchups().forEach(c => {
+      if (!scheduledCatchupCourses.has(c.ymd)) {
+        tasksToSchedule.push({
+          title: `Rattrapage Full Stack (${formatDateFR(c.ymd, false)})`,
+          category: 'RATTRAPAGE',
+          duration: 90,
+          intensity: 'HIGH',
+          linkedCourseDate: c.ymd,
+          notes: `Rattrapage du cours manqué du ${c.dayName} ${c.ymd}`
+        });
+      }
+    });
+
+    const sportNeeded = Math.max(0, 2 - countSessionsFor('SPORT'));
+    for (let i = 0; i < sportNeeded; i++) {
+      tasksToSchedule.push({
+        title: i === 0 ? 'Séance de Sport #1 (Cardio / Muscu)' : 'Séance de Sport #2 (Endurance)',
+        category: 'SPORT',
+        duration: 60,
+        intensity: 'HIGH',
+        notes: 'Objectif hebdomadaire : 2 séances/semaine'
+      });
+    }
+
+    let iaRem = Math.max(0, 120 - sumMinutesFor('IA'));
+    while (iaRem > 0) {
+      const dur = Math.min(60, iaRem);
+      tasksToSchedule.push({
+        title: 'Intelligence Artificielle – Cours & Pratique',
+        category: 'IA',
+        duration: dur,
+        intensity: 'HIGH',
+        notes: 'Objectif IA : 2h / semaine'
+      });
+      iaRem -= dur;
+    }
+
+    let frRem = Math.max(0, 120 - sumMinutesFor('FRANCAIS'));
+    while (frRem > 0) {
+      const dur = Math.min(60, frRem);
+      tasksToSchedule.push({
+        title: 'Français – Expression & Rédaction',
+        category: 'FRANCAIS',
+        duration: dur,
+        intensity: 'LIGHT',
+        notes: 'Objectif Français : 2h / semaine'
+      });
+      frRem -= dur;
+    }
+
+    let enRem = Math.max(0, 120 - sumMinutesFor('ANGLAIS'));
+    while (enRem > 0) {
+      const dur = Math.min(60, enRem);
+      tasksToSchedule.push({
+        title: 'Anglais – Technique & Compréhension',
+        category: 'ANGLAIS',
+        duration: dur,
+        intensity: 'LIGHT',
+        notes: 'Objectif Anglais : 2h / semaine'
+      });
+      enRem -= dur;
+    }
+
+    if (tasksToSchedule.length === 0) {
+      showToast('Tous les objectifs de cette semaine sont déjà planifiés ou réalisés !', 'success');
+      return;
+    }
+
+    const candidateSlots = [];
+    weekDays.forEach(ymd => {
+      const shift = getDayShiftInfo(ymd);
+      const course = evaluateCourseForDate(ymd);
+      const hasActiveCourse = course && !course.hasConflict && course.status !== 'ABSENT';
+
+      if ((shift.effectiveType === 'REPOS_2' || shift.effectiveType === 'CONGE' || shift.effectiveType === 'ABSENCE_TRAVAIL') && !shift.prevHadNightShift) {
+        candidateSlots.push({ ymd, start: '09:30', end: '11:00', prio: 100, allowHigh: true });
+        candidateSlots.push({ ymd, start: '11:15', end: '12:15', prio: 95, allowHigh: true });
+        candidateSlots.push({ ymd, start: '15:00', end: '16:30', prio: 92, allowHigh: true });
+        candidateSlots.push({ ymd, start: '17:00', end: '18:00', prio: 88, allowHigh: true });
+        if (!hasActiveCourse) {
+          candidateSlots.push({ ymd, start: '19:00', end: '20:00', prio: 84, allowHigh: true });
+        }
+      } else if (shift.startsNightShift) {
+        candidateSlots.push({ ymd, start: '10:00', end: '11:00', prio: 70, allowHigh: false });
+        candidateSlots.push({ ymd, start: '11:30', end: '12:30', prio: 65, allowHigh: false });
+      } else if (shift.prevHadNightShift || shift.effectiveType === 'REPOS_1') {
+        candidateSlots.push({ ymd, start: '16:30', end: '17:30', prio: 60, allowHigh: false });
+        candidateSlots.push({ ymd, start: '17:45', end: '18:45', prio: 55, allowHigh: false });
+      } else if (shift.startsDayShift) {
+        candidateSlots.push({ ymd, start: '21:30', end: '22:00', prio: 10, allowHigh: false });
+      }
+    });
+
+    candidateSlots.sort((a, b) => b.prio - a.prio);
+
+    let addedCount = 0;
+    tasksToSchedule.forEach(task => {
+      for (const slot of candidateSlots) {
+        if (slot.used) continue;
+        if (task.intensity === 'HIGH' && !slot.allowHigh) continue;
+
+        const slotStartMin = timeToMin(slot.start);
+        const slotEndMin = timeToMin(slot.end);
+        const slotDur = slotEndMin - slotStartMin;
+        const actualDur = Math.min(task.duration, slotDur);
+        if (actualDur < 30) continue;
+
+        const endMin = slotStartMin + actualDur;
+        const endTime = `${pad2(Math.floor(endMin / 60))}:${pad2(endMin % 60)}`;
+
+        const check = validateActivitySlot(slot.ymd, slot.start, endTime, task.category);
+        if (!check.valid || check.level === 'warning') continue;
+
+        state.activities.push({
+          id: uid(),
+          title: task.title,
+          category: task.category,
+          date: slot.ymd,
+          startTime: slot.start,
+          endTime,
+          completed: false,
+          notes: task.notes,
+          linkedCourseDate: task.linkedCourseDate || null
+        });
+        slot.used = true;
+        addedCount++;
+        break;
+      }
+    });
+
+    saveState();
+    renderAll();
+    showToast(`Planning intelligent généré : ${addedCount} séance(s) placée(s) sans conflit avec vos gardes !`, 'success');
+  }
+
+  /* ============================================================================
+     ACTIONS MÉTIER
+     ============================================================================ */
+  window.setCourseStatus = function(ymd, newStatus) {
+    state.courseStatuses[ymd] = newStatus;
+
+    if (newStatus === 'ABSENT') {
+      const exists = state.activities.some(a => a.category === 'RATTRAPAGE' && a.linkedCourseDate === ymd);
+      if (!exists) {
+        let targetDate = addDays(ymd, 1);
+        for (let i = 1; i <= 12; i++) {
+          const cand = addDays(ymd, i);
+          const s = getDayShiftInfo(cand);
+          if ((s.effectiveType === 'REPOS_2' || s.effectiveType === 'CONGE') && !s.prevHadNightShift) {
+            targetDate = cand;
+            break;
+          }
+        }
+        const check = validateActivitySlot(targetDate, '15:00', '16:30', 'RATTRAPAGE');
+        const startT = check.valid ? '15:00' : '17:00';
+        const endT = check.valid ? '16:30' : '18:30';
+
+        state.activities.push({
+          id: uid(),
+          title: `Rattrapage Full Stack (${formatDateFR(ymd, false)})`,
+          category: 'RATTRAPAGE',
+          date: targetDate,
+          startTime: startT,
+          endTime: endT,
+          completed: false,
+          notes: `Tâche créée automatiquement suite à l'absence du ${ymd}.`,
+          linkedCourseDate: ymd
+        });
+        showToast(`Absence enregistrée. Rattrapage planifié automatiquement le ${formatDateFR(targetDate)}.`, 'warning');
+      }
+    } else if (newStatus === 'RATTRAPAGE_EFFECTUE') {
+      state.activities.forEach(a => {
+        if (a.linkedCourseDate === ymd) a.completed = true;
+      });
+      showToast('Rattrapage validé !', 'success');
+    }
+
+    saveState();
+    renderAll();
+  };
+
+  window.scheduleCatchupForCourse = function(courseYmd) {
+    let bestDate = null;
+    for (let i = 1; i <= 21; i++) {
+      const d = addDays(TODAY_YMD > courseYmd ? TODAY_YMD : courseYmd, i);
+      const s = getDayShiftInfo(d);
+      if ((s.effectiveType === 'REPOS_2' || s.effectiveType === 'CONGE') && !s.prevHadNightShift) {
+        const chk = validateActivitySlot(d, '10:00', '11:30', 'RATTRAPAGE');
+        if (chk.valid && chk.level === 'ok') { bestDate = d; break; }
+      }
+    }
+    openActivityModal(null, {
+      title: `Rattrapage Full Stack (${formatDateFR(courseYmd, false)})`,
+      category: 'RATTRAPAGE',
+      date: bestDate || addDays(TODAY_YMD, 1),
+      startTime: '10:00',
+      endTime: '11:30',
+      linkedCourseDate: courseYmd,
+      notes: `Rattrapage de la séance du ${formatDateFR(courseYmd)}`
+    });
+  };
+
+  window.toggleActivityDone = function(actId) {
+    const act = state.activities.find(a => a.id === actId);
+    if (!act) return;
+    act.completed = !act.completed;
+
+    if (act.linkedCourseDate && act.completed) {
+      state.courseStatuses[act.linkedCourseDate] = 'RATTRAPAGE_EFFECTUE';
+      showToast('Rattrapage terminé et séance académique mise à jour !', 'success');
+    }
+    saveState();
+    renderAll();
+  };
+
+  window.deleteActivity = function(actId) {
+    state.activities = state.activities.filter(a => a.id !== actId);
+    saveState();
+    renderAll();
+    showToast('Activité supprimée.', 'info');
+  };
+
+  /* ============================================================================
+     MODALS & FORMULAIRES
+     ============================================================================ */
+  window.openModal = function(id) {
+    document.getElementById(id).classList.add('open');
+  };
+
+  window.closeModal = function(id) {
+    document.getElementById(id).classList.remove('open');
+  };
+
+  window.openActivityModal = function(actId = null, prefill = null) {
+    const form = document.getElementById('activityForm');
+    form.reset();
+    document.getElementById('actValidationWarning').innerHTML = '';
+
+    if (actId) {
+      const act = state.activities.find(a => a.id === actId);
+      if (!act) return;
+      document.getElementById('activityModalTitle').textContent = 'Modifier l’activité';
+      document.getElementById('actIdInput').value = act.id;
+      document.getElementById('actLinkedCourseInput').value = act.linkedCourseDate || '';
+      document.getElementById('actTitleInput').value = act.title;
+      document.getElementById('actCatInput').value = act.category;
+      document.getElementById('actDateInput').value = act.date;
+      document.getElementById('actStartInput').value = act.startTime;
+      document.getElementById('actEndInput').value = act.endTime;
+      document.getElementById('actNotesInput').value = act.notes || '';
+    } else {
+      document.getElementById('activityModalTitle').textContent = 'Planifier une activité';
+      document.getElementById('actIdInput').value = '';
+      document.getElementById('actLinkedCourseInput').value = prefill?.linkedCourseDate || '';
+      document.getElementById('actTitleInput').value = prefill?.title || '';
+      document.getElementById('actCatInput').value = prefill?.category || 'FRANCAIS';
+      document.getElementById('actDateInput').value = prefill?.date || TODAY_YMD;
+      document.getElementById('actStartInput').value = prefill?.startTime || '10:00';
+      document.getElementById('actEndInput').value = prefill?.endTime || '11:00';
+      document.getElementById('actNotesInput').value = prefill?.notes || '';
+    }
+    checkActivityFormLive();
+    openModal('activityModal');
+  };
+
+  function checkActivityFormLive() {
+    const id = document.getElementById('actIdInput').value || null;
+    const date = document.getElementById('actDateInput').value;
+    const start = document.getElementById('actStartInput').value;
+    const end = document.getElementById('actEndInput').value;
+    const cat = document.getElementById('actCatInput').value;
+    const box = document.getElementById('actValidationWarning');
+
+    if (!date || !start || !end) { box.innerHTML = ''; return; }
+    const res = validateActivitySlot(date, start, end, cat, id);
+    if (!res.message) { box.innerHTML = ''; return; }
+    const cls = res.level === 'danger' ? 'alert-danger' : res.level === 'warning' ? 'alert-warning' : 'alert-info';
+    box.innerHTML = `<div class="alert ${cls}">${escapeHTML(res.message)}</div>`;
+  }
+
+  ['actDateInput', 'actStartInput', 'actEndInput', 'actCatInput'].forEach(elId => {
+    document.getElementById(elId).addEventListener('change', checkActivityFormLive);
+  });
+
+  document.getElementById('activityForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const id = document.getElementById('actIdInput').value;
+    const date = document.getElementById('actDateInput').value;
+    const startTime = document.getElementById('actStartInput').value;
+    const endTime = document.getElementById('actEndInput').value;
+    const category = document.getElementById('actCatInput').value;
+    const title = document.getElementById('actTitleInput').value.trim();
+    const notes = document.getElementById('actNotesInput').value.trim();
+    const linkedCourseDate = document.getElementById('actLinkedCourseInput').value || null;
+
+    const check = validateActivitySlot(date, startTime, endTime, category, id || null);
+    if (!check.valid) {
+      showToast(check.message, 'danger');
+      checkActivityFormLive();
+      return;
+    }
+
+    if (id) {
+      const idx = state.activities.findIndex(a => a.id === id);
+      if (idx !== -1) {
+        state.activities[idx] = { ...state.activities[idx], title, category, date, startTime, endTime, notes, linkedCourseDate };
+      }
+      showToast('Activité mise à jour.', 'success');
+    } else {
+      state.activities.push({ id: uid(), title, category, date, startTime, endTime, completed: false, notes, linkedCourseDate });
+      showToast('Activité enregistrée.', 'success');
+    }
+
+    saveState();
+    closeModal('activityModal');
+    renderAll();
+  });
+
+  window.openDayDetailModal = function(ymd) {
+    const shift = getDayShiftInfo(ymd);
+    const course = evaluateCourseForDate(ymd);
+
+    document.getElementById('dayDetailTitle').textContent = `Journée du ${formatDateFR(ymd)}`;
+    document.getElementById('dayDetailDateInput').value = ymd;
+    document.getElementById('dayOverrideSelect').value = state.overrides[ymd] || 'NORMAL';
+    document.getElementById('dayJournalNoteInput').value = state.shiftNotes[ymd] || '';
+
+    let html = `<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+      <span class="badge ${shift.badge}">${escapeHTML(shift.label)}</span>`;
+    if (shift.prevHadNightShift) {
+      html += `<span class="badge badge-warning">Sortie de nuit 00h–09h</span>`;
+    }
+    if (course) {
+      html += `<span class="badge ${course.compatBadge}">🎓 Cours 19h–21h : ${escapeHTML(course.compatLabel)}</span>`;
+    }
+    html += `</div>`;
+    if (shift.workIntervals.length) {
+      html += `<div style="font-size:0.82rem; color:var(--text-muted);">Créneaux professionnels bloqués : ${shift.workIntervals.map(w => w.reason).join(' | ')}</div>`;
+    } else {
+      html += `<div style="font-size:0.82rem; color:var(--success);">Aucun horaire de travail sur cette journée.</div>`;
+    }
+    document.getElementById('dayDetailSummary').innerHTML = html;
+
+    document.getElementById('dayAddActivityShortcut').onclick = () => {
+      closeModal('dayDetailModal');
+      openActivityModal(null, { date: ymd, startTime: shift.prevHadNightShift ? '16:30' : '10:00', endTime: shift.prevHadNightShift ? '17:30' : '11:00' });
+    };
+
+    openModal('dayDetailModal');
+  };
+
+  document.getElementById('dayOverrideForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const ymd = document.getElementById('dayDetailDateInput').value;
+    const ov = document.getElementById('dayOverrideSelect').value;
+    const note = document.getElementById('dayJournalNoteInput').value.trim();
+
+    if (ov === 'NORMAL') delete state.overrides[ymd];
+    else state.overrides[ymd] = ov;
+
+    if (!note) delete state.shiftNotes[ymd];
+    else state.shiftNotes[ymd] = note;
+
+    saveState();
+    closeModal('dayDetailModal');
+    renderAll();
+    showToast('Journée et journal de service mis à jour.', 'success');
+  });
+
+  /* ============================================================================
+     RENDU DES VUES
+     ============================================================================ */
+  const CAT_LABELS = {
+    FRANCAIS: { label: 'Français', color: '#3b82f6' },
+    ANGLAIS: { label: 'Anglais', color: '#8b5cf6' },
+    IA: { label: 'IA', color: '#ec4899' },
+    SPORT: { label: 'Sport', color: '#10b981' },
+    RATTRAPAGE: { label: 'Rattrapage FS', color: '#f59e0b' },
+    PERSO: { label: 'Personnel', color: '#64748b' }
+  };
+
+  function getRuleHintForDay(shift) {
+    if (shift.startsDayShift) return 'Service de jour (09h–21h) : privilégiez le repos et les tâches très courtes.';
+    if (shift.startsNightShift) return 'Service de nuit à 21h : évitez les efforts intenses et préservez votre sommeil (14h–20h).';
+    if (shift.prevHadNightShift || shift.effectiveType === 'REPOS_1') return 'Post-nuit (fin 09h) : priorité au sommeil et à la récupération.';
+    if (shift.effectiveType === 'REPOS_2') return 'Repos complet : journée idéale pour vos activités importantes (IA, Sport, Rattrapages).';
+    return 'Journée aménagée : adaptez vos activités selon votre niveau d’énergie.';
+  }
+
+  function renderActivityRowHTML(act) {
+    const meta = CAT_LABELS[act.category] || CAT_LABELS.PERSO;
+    const durMin = Math.max(0, timeToMin(act.endTime) - timeToMin(act.startTime));
+    return `
+      <div class="item-row ${act.completed ? 'done' : ''}">
+        <div class="item-main">
+          <input type="checkbox" class="item-check" ${act.completed ? 'checked' : ''} onchange="toggleActivityDone('${act.id}')" />
+          <div>
+            <div class="item-title">${escapeHTML(act.title)}</div>
+            <div class="item-meta">
+              <span class="badge" style="background:${meta.color}22; color:${meta.color};">${meta.label}</span>
+              <span>📅 ${formatDateFR(act.date)}</span>
+              <span>🕒 ${act.startTime} – ${act.endTime} (${minToHoursText(durMin)})</span>
+              ${act.notes ? `<span>📝 ${escapeHTML(act.notes)}</span>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-secondary btn-sm" onclick="openActivityModal('${act.id}')">Modifier</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteActivity('${act.id}')">Supprimer</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function computeWeekStats(mondayYmd) {
+    const days = Array.from({ length: 7 }, (_, i) => addDays(mondayYmd, i));
+    const daySet = new Set(days);
+
+    const minsDone = { FRANCAIS: 0, ANGLAIS: 0, IA: 0 };
+    const minsPlanned = { FRANCAIS: 0, ANGLAIS: 0, IA: 0 };
+    let sportDone = 0;
+    let sportPlanned = 0;
+
+    state.activities.forEach(a => {
+      if (!daySet.has(a.date)) return;
+      const dur = Math.max(0, timeToMin(a.endTime) - timeToMin(a.startTime));
+      if (a.category in minsPlanned) {
+        minsPlanned[a.category] += dur;
+        if (a.completed) minsDone[a.category] += dur;
+      }
+      if (a.category === 'SPORT') {
+        sportPlanned++;
+        if (a.completed) sportDone++;
+      }
+    });
+
+    let fsDoneMin = 0;
+    days.forEach(d => {
+      const c = evaluateCourseForDate(d);
+      if (c && (c.status === 'PRESENT' || c.status === 'RATTRAPAGE_EFFECTUE')) {
+        fsDoneMin += 120;
+      }
+    });
+
+    const totalLearningDoneMin = minsDone.FRANCAIS + minsDone.ANGLAIS + minsDone.IA + fsDoneMin;
+    const pct = Math.min(100, Math.round(
+      ((Math.min(120, minsDone.FRANCAIS) / 120) +
+       (Math.min(120, minsDone.ANGLAIS) / 120) +
+       (Math.min(120, minsDone.IA) / 120) +
+       (Math.min(2, sportDone) / 2) +
+       (Math.min(240, fsDoneMin) / 240)) / 5 * 100
+    ));
+
+    return {
+      days,
+      minsDone,
+      minsPlanned,
+      sportDone,
+      sportPlanned,
+      fsDoneMin,
+      totalLearningDoneMin,
+      pct
+    };
+  }
+
+  function renderProgressBar(label, currentText, pct, color) {
+    const safePct = Math.min(100, Math.max(0, Math.round(pct)));
+    return `
+      <div class="progress-wrap">
+        <div class="progress-top">
+          <span>${label}</span>
+          <span style="color:var(--text-muted);">${currentText} (${safePct}%)</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${safePct}%; background:${color};"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderDashboard() {
+    const now = new Date();
+    const shiftStatus = getShiftStatusAt(now);
+    const todayShift = shiftStatus.todayInfo;
+    const nextCourse = getNextCourse(TODAY_YMD);
+    const catchups = getAllPendingCatchups();
+    const weekStats = computeWeekStats(getMondayOfWeek(TODAY_YMD));
+
+    document.getElementById('dashboardDateSubtitle').textContent =
+      `Aujourd'hui : ${formatDateFR(TODAY_YMD)} — ${todayShift.label}`;
+
+    const alertsEl = document.getElementById('dashboardAlerts');
+    let alertsHtml = '';
+    const todayCourse = evaluateCourseForDate(TODAY_YMD);
+    if (todayCourse && todayCourse.hasConflict && todayCourse.status !== 'RATTRAPAGE_EFFECTUE') {
+      alertsHtml += `<div class="alert alert-danger">⚠️ <strong>Conflit détecté aujourd'hui :</strong> Votre cours Full Stack (19h00–21h00) chevauche votre ${escapeHTML(todayShift.label)}. Pensez à planifier un rattrapage.</div>`;
+    } else if (todayCourse && todayCourse.compatibility === 'APRES_NUIT') {
+      alertsHtml += `<div class="alert alert-warning">🛌 <strong>Vigilance récupération :</strong> Cours Full Stack ce soir à 19h00 après votre service de nuit (fin 09h00). Reposez-vous en journée.</div>`;
+    }
+    if (catchups.length > 0) {
+      alertsHtml += `<div class="alert alert-warning">📚 Vous avez <strong>${catchups.length} cours à rattraper</strong>. Utilisez « Planifier ma semaine » ou l’onglet Académique pour les placer sur un Repos 2.</div>`;
+    }
+    alertsEl.innerHTML = alertsHtml;
+
+    if (shiftStatus.active) {
+      document.getElementById('kpiNextShiftTitle').textContent = 'En service';
+      document.getElementById('kpiNextShiftSub').textContent = `${shiftStatus.active.type} • Fin ${shiftStatus.active.rangeText.split('–')[1].trim()}`;
+    } else if (shiftStatus.next) {
+      document.getElementById('kpiNextShiftTitle').textContent = shiftStatus.next.short || shiftStatus.next.type;
+      document.getElementById('kpiNextShiftSub').textContent = `${formatDateFR(shiftStatus.next.ymd)} (${shiftStatus.next.rangeText})`;
+    }
+
+    if (nextCourse) {
+      document.getElementById('kpiNextCourseTitle').textContent = `${nextCourse.dayName} 19h–21h`;
+      document.getElementById('kpiNextCourseSub').innerHTML = `${formatDateFR(nextCourse.ymd, false)} • <span class="badge ${nextCourse.compatBadge}">${escapeHTML(nextCourse.compatLabel)}</span>`;
+    } else {
+      document.getElementById('kpiNextCourseTitle').textContent = 'Aucun';
+      document.getElementById('kpiNextCourseSub').textContent = '—';
+    }
+
+    document.getElementById('kpiLearningHours').textContent = `${minToHoursText(weekStats.totalLearningDoneMin)} / 10h`;
+    document.getElementById('kpiSportCount').textContent = `Sport : ${weekStats.sportDone} / 2 séances (${weekStats.sportPlanned} prévues)`;
+    document.getElementById('kpiCatchupCount').textContent = String(catchups.length);
+
+    document.getElementById('todayRuleHint').textContent = getRuleHintForDay(todayShift);
+    const todayActs = state.activities
+      .filter(a => a.date === TODAY_YMD)
+      .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+    const pendingToday = todayActs.filter(a => !a.completed);
+    const doneAll = state.activities.filter(a => a.completed).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+    const doneTodayCount = todayActs.filter(a => a.completed).length;
+
+    document.getElementById('kpiDoneTodayFoot').textContent = `Terminées aujourd'hui : ${doneTodayCount}`;
+    document.getElementById('doneCountBadge').textContent = `${state.activities.filter(a => a.completed).length} au total`;
+
+    document.getElementById('todayActivitiesList').innerHTML = pendingToday.length
+      ? pendingToday.map(renderActivityRowHTML).join('')
+      : `<div style="color:var(--text-muted); font-size:0.86rem; padding:10px 0;">Aucune activité en attente aujourd'hui. ${todayCourse ? 'Cours fixe 19h–21h au programme.' : ''}</div>`;
+
+    document.getElementById('todayCompletedList').innerHTML = doneAll.length
+      ? doneAll.map(renderActivityRowHTML).join('')
+      : `<div style="color:var(--text-muted); font-size:0.84rem;">Aucune activité terminée pour le moment.</div>`;
+
+    const monday = getMondayOfWeek(TODAY_YMD);
+    document.getElementById('dashWeekRange').textContent = `Semaine du ${formatDateFR(monday, false)}`;
+    document.getElementById('dashWeeklyPct').textContent = `${weekStats.pct}% réalisé`;
+    document.getElementById('dashWeeklyBars').innerHTML =
+      renderProgressBar('Français (2h)', `${minToHoursText(weekStats.minsDone.FRANCAIS)} / 2h`, (weekStats.minsDone.FRANCAIS / 120) * 100, '#3b82f6') +
+      renderProgressBar('Anglais (2h)', `${minToHoursText(weekStats.minsDone.ANGLAIS)} / 2h`, (weekStats.minsDone.ANGLAIS / 120) * 100, '#8b5cf6') +
+      renderProgressBar('Intelligence Artificielle (2h)', `${minToHoursText(weekStats.minsDone.IA)} / 2h`, (weekStats.minsDone.IA / 120) * 100, '#ec4899') +
+      renderProgressBar('Sport (2 séances)', `${weekStats.sportDone} / 2`, (weekStats.sportDone / 2) * 100, '#10b981') +
+      renderProgressBar('Full Stack (4h fixes)', `${minToHoursText(weekStats.fsDoneMin)} / 4h`, (weekStats.fsDoneMin / 240) * 100, '#f59e0b');
+
+    document.getElementById('dashCatchupList').innerHTML = catchups.length
+      ? catchups.slice(0, 4).map(c => `
+        <div class="item-row">
+          <div>
+            <div class="item-title">Cours du ${formatDateFR(c.ymd)}</div>
+            <div class="item-meta">
+              <span class="badge ${c.compatBadge}">${escapeHTML(c.compatLabel)}</span>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="scheduleCatchupForCourse('${c.ymd}')">Planifier</button>
+        </div>
+      `).join('')
+      : `<div style="color:var(--success); font-size:0.86rem;">✓ Aucun cours à rattraper.</div>`;
+
+    const navBadge = document.getElementById('navCatchupBadge');
+    if (catchups.length > 0) {
+      navBadge.style.display = 'inline-block';
+      navBadge.textContent = String(catchups.length);
+    } else {
+      navBadge.style.display = 'none';
+    }
+  }
+
+  function renderWorkView() {
+    const year = uiState.calYear;
+    const month = uiState.calMonth;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    let stats = { jour: 0, nuit: 0, repos: 0, conge: 0, renfort: 0, totalHours: 0 };
+    for (let d = 1; d <= daysInMonth; d++) {
+      const ymd = `${year}-${pad2(month + 1)}-${pad2(d)}`;
+      const s = getDayShiftInfo(ymd);
+      stats.totalHours += s.shiftHoursToday;
+      if (s.effectiveType === 'JOUR') stats.jour++;
+      else if (s.effectiveType === 'NUIT') stats.nuit++;
+      else if (s.effectiveType === 'REPOS_1' || s.effectiveType === 'REPOS_2') stats.repos++;
+      else if (s.effectiveType === 'CONGE' || s.effectiveType === 'ABSENCE_TRAVAIL') stats.conge++;
+      else if (s.effectiveType === 'RENFORT_JOUR' || s.effectiveType === 'RENFORT_NUIT') stats.renfort++;
+    }
+
+    document.getElementById('workStatsGrid').innerHTML = `
+      <div class="kpi-card">
+        <span class="kpi-label">Heures travaillées (Mois)</span>
+        <span class="kpi-value">${stats.totalHours}h</span>
+        <span class="kpi-foot">${stats.jour} Jours • ${stats.nuit} Nuits</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Jours de repos</span>
+        <span class="kpi-value">${stats.repos} j</span>
+        <span class="kpi-foot">Repos 1 & Repos 2 inclus</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Renforts</span>
+        <span class="kpi-value">${stats.renfort}</span>
+        <span class="kpi-foot">Services exceptionnels</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Congés / Absences</span>
+        <span class="kpi-value">${stats.conge} j</span>
+        <span class="kpi-foot">Dérogations enregistrées</span>
+      </div>
+    `;
+
+    const isMonth = uiState.workMode === 'month';
+    document.getElementById('workMonthCard').style.display = isMonth ? 'block' : 'none';
+    document.getElementById('workYearCard').style.display = isMonth ? 'none' : 'block';
+    document.getElementById('workModeMonthBtn').className = isMonth ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+    document.getElementById('workModeYearBtn').className = !isMonth ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+
+    if (isMonth) {
+      const monthTitle = new Date(year, month, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+      document.getElementById('calMonthTitle').textContent = monthTitle;
+
+      const firstYmd = `${year}-${pad2(month + 1)}-01`;
+      const startDow = getDayOfWeekMonFirst(firstYmd);
+      const startGridYmd = addDays(firstYmd, -(startDow - 1));
+
+      let cellsHtml = '';
+      for (let i = 0; i < 42; i++) {
+        const ymd = addDays(startGridYmd, i);
+        const { m, d } = parseYMD(ymd);
+        const isCurrentMonth = (m - 1) === month;
+        const isToday = ymd === TODAY_YMD;
+        const shift = getDayShiftInfo(ymd);
+        const course = evaluateCourseForDate(ymd);
+        const hasNote = Boolean(state.shiftNotes[ymd]);
+        const actsCount = state.activities.filter(a => a.date === ymd).length;
+
+        cellsHtml += `
+          <div class="cal-cell ${isCurrentMonth ? '' : 'other-month'} ${isToday ? 'is-today' : ''}" onclick="openDayDetailModal('${ymd}')">
+            <div class="cal-cell-top">
+              <span>${d}</span>
+              ${hasNote ? '<span title="Note de service">📝</span>' : ''}
+            </div>
+            <div class="cal-pill ${shift.badge}">${escapeHTML(shift.short)}</div>
+            ${course ? `<div class="cal-pill ${course.hasConflict ? 'badge-danger' : 'badge-info'}">🎓 19h-21h</div>` : ''}
+            <div class="cal-dots">
+              ${actsCount > 0 ? `<span style="font-size:0.68rem; color:var(--text-muted);">⚡ ${actsCount} act.</span>` : ''}
+            </div>
+          </div>
+        `;
+      }
+      document.getElementById('workMonthGrid').innerHTML = cellsHtml;
+    } else {
+      document.getElementById('calYearTitle').textContent = String(year);
+      let yearHtml = '';
+      for (let m = 0; m < 12; m++) {
+        const mName = new Date(year, m, 1).toLocaleDateString('fr-FR', { month: 'long' });
+        const dim = new Date(year, m + 1, 0).getDate();
+        const firstDow = getDayOfWeekMonFirst(`${year}-${pad2(m + 1)}-01`);
+
+        let daysHtml = '';
+        for (let blank = 1; blank < firstDow; blank++) {
+          daysHtml += `<div></div>`;
+        }
+        for (let d = 1; d <= dim; d++) {
+          const ymd = `${year}-${pad2(m + 1)}-${pad2(d)}`;
+          const shift = getDayShiftInfo(ymd);
+          const isToday = ymd === TODAY_YMD;
+          daysHtml += `
+            <div class="mini-day ${shift.badge}"
+                 style="${isToday ? 'outline:2px solid var(--text-main);' : ''}"
+                 title="${ymd} : ${escapeHTML(shift.label)}"
+                 onclick="openDayDetailModal('${ymd}')">${d}</div>
+          `;
+        }
+        yearHtml += `
+          <div class="mini-month">
+            <h4 style="text-transform:capitalize;">${mName}</h4>
+            <div class="mini-days">${daysHtml}</div>
+          </div>
+        `;
+      }
+      document.getElementById('workYearGrid').innerHTML = yearHtml;
+    }
+
+    const journalDates = Array.from(new Set([...Object.keys(state.shiftNotes), ...Object.keys(state.overrides)])).sort().reverse();
+    document.getElementById('shiftJournalList').innerHTML = journalDates.length
+      ? journalDates.map(ymd => {
+        const shift = getDayShiftInfo(ymd);
+        const note = state.shiftNotes[ymd] || '';
+        return `
+          <div class="item-row">
+            <div>
+              <div class="item-title">${formatDateFR(ymd)} — <span class="badge ${shift.badge}">${escapeHTML(shift.label)}</span></div>
+              <div class="item-meta">${note ? escapeHTML(note) : 'Dérogation enregistrée sans commentaire.'}</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="openDayDetailModal('${ymd}')">Éditer</button>
+          </div>
+        `;
+      }).join('')
+      : `<div style="color:var(--text-muted); font-size:0.85rem;">Aucune note de poste ou dérogation enregistrée. Cliquez sur un jour du calendrier pour en ajouter.</div>`;
+  }
+
+  function renderAcademicView() {
+    document.getElementById('academicMonthFilter').value = uiState.academicMonth;
+    const courses = getCoursesInMonth(uiState.academicMonth);
+    const conflictFilter = document.getElementById('academicConflictFilter').value;
+
+    const total = courses.length;
+    const conflicts = courses.filter(c => c.hasConflict).length;
+    const afterNight = courses.filter(c => c.compatibility === 'APRES_NUIT').length;
+    const attended = courses.filter(c => c.status === 'PRESENT' || c.status === 'RATTRAPAGE_EFFECTUE').length;
+
+    document.getElementById('academicKpis').innerHTML = `
+      <div class="kpi-card">
+        <span class="kpi-label">Séances du mois</span>
+        <span class="kpi-value">${total}</span>
+        <span class="kpi-foot">${total * 2}h de cours fixes (19h–21h)</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Conflits détectés</span>
+        <span class="kpi-value" style="color:var(--danger);">${conflicts}</span>
+        <span class="kpi-foot">Chevauchement garde 12h</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Après service de nuit</span>
+        <span class="kpi-value" style="color:var(--warning);">${afterNight}</span>
+        <span class="kpi-foot">Repos post-nuit à gérer</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">Séances validées</span>
+        <span class="kpi-value" style="color:var(--success);">${attended} / ${total}</span>
+        <span class="kpi-foot">${attended * 2}h suivies / rattrapées</span>
+      </div>
+    `;
+
+    const filtered = courses.filter(c => {
+      if (conflictFilter === 'ALL') return true;
+      if (conflictFilter === 'CONFLIT') return c.hasConflict;
+      if (conflictFilter === 'APRES_NUIT') return c.compatibility === 'APRES_NUIT';
+      if (conflictFilter === 'SANS_CONFLIT') return c.compatibility === 'SANS_CONFLIT';
+      if (conflictFilter === 'A_RATTRAPER') return c.isPendingCatchup;
+      return true;
+    });
+
+    document.getElementById('academicCoursesBody').innerHTML = filtered.map(c => `
+      <tr>
+        <td><strong>${c.dayName}</strong><br><span style="font-size:0.78rem; color:var(--text-muted);">${formatDateFR(c.ymd, false)}</span></td>
+        <td><span class="badge ${c.shift.badge}">${escapeHTML(c.shift.short)}</span></td>
+        <td><span class="badge ${c.compatBadge}">${escapeHTML(c.compatLabel)}</span></td>
+        <td>
+          <select class="form-control" style="padding:5px 8px; font-size:0.8rem;" onchange="setCourseStatus('${c.ymd}', this.value)">
+            <option value="PREVU" ${c.status === 'PREVU' ? 'selected' : ''}>Prévue</option>
+            <option value="PRESENT" ${c.status === 'PRESENT' ? 'selected' : ''}>Présent</option>
+            <option value="ABSENT" ${c.status === 'ABSENT' ? 'selected' : ''}>Absent (À rattraper)</option>
+            <option value="RATTRAPAGE_EFFECTUE" ${c.status === 'RATTRAPAGE_EFFECTUE' ? 'selected' : ''}>Rattrapage effectué</option>
+          </select>
+        </td>
+        <td>
+          ${c.isPendingCatchup
+            ? `<button class="btn btn-primary btn-sm" onclick="scheduleCatchupForCourse('${c.ymd}')">Planifier rattrapage</button>`
+            : `<span style="color:var(--text-muted); font-size:0.78rem;">OK</span>`}
+        </td>
+      </tr>
+    `).join('') || `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Aucun cours ne correspond à ce filtre.</td></tr>`;
+
+    const catchups = getAllPendingCatchups();
+    document.getElementById('missedCoursesBadge').textContent = String(catchups.length);
+    document.getElementById('academicMissedList').innerHTML = catchups.length
+      ? catchups.map(c => `
+        <div class="item-row">
+          <div>
+            <div class="item-title">${c.dayName} ${formatDateFR(c.ymd, false)}</div>
+            <div class="item-meta">
+              <span class="badge ${c.compatBadge}">${escapeHTML(c.compatLabel)}</span>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-primary btn-sm" onclick="scheduleCatchupForCourse('${c.ymd}')">Planifier</button>
+            <button class="btn btn-success btn-sm" onclick="setCourseStatus('${c.ymd}', 'RATTRAPAGE_EFFECTUE')">✓ Fait</button>
+          </div>
+        </div>
+      `).join('')
+      : `<div style="color:var(--success); font-size:0.86rem;">✓ Aucun cours manqué en attente de rattrapage.</div>`;
+
+    const avgFs = Math.round(state.fsModules.reduce((acc, m) => acc + Number(m.progress), 0) / state.fsModules.length);
+    document.getElementById('fsProgressSub').textContent = `Progression globale : ${avgFs}%`;
+    document.getElementById('fsModulesList').innerHTML = state.fsModules.map(mod => `
+      <div class="item-row" style="flex-direction:column; align-items:stretch; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <strong style="font-size:0.86rem;">${escapeHTML(mod.title)}</strong>
+          <span class="badge badge-info">${mod.progress}%</span>
+        </div>
+        <input type="range" min="0" max="100" step="5" value="${mod.progress}"
+               oninput="updateFsModuleProgress('${mod.id}', this.value)"
+               style="width:100%; accent-color:var(--primary); cursor:pointer;" />
+      </div>
+    `).join('');
+  }
+
+  window.updateFsModuleProgress = function(id, val) {
+    const mod = state.fsModules.find(m => m.id === id);
+    if (mod) {
+      mod.progress = Number(val);
+      saveState();
+      renderAcademicView();
+    }
+  };
+
+  function renderPersonalView() {
+    const mon = uiState.selectedWeekMonday;
+    const sun = addDays(mon, 6);
+    document.getElementById('personalWeekLabel').textContent = `Du ${formatDateFR(mon, false)} au ${formatDateFR(sun, false)}`;
+
+    const ws = computeWeekStats(mon);
+    document.getElementById('personalWeeklyProgress').innerHTML =
+      renderProgressBar('Français (Obj. 2h/sem)', `${minToHoursText(ws.minsDone.FRANCAIS)} réalisés / ${minToHoursText(ws.minsPlanned.FRANCAIS)} planifiés`, (ws.minsDone.FRANCAIS / 120) * 100, '#3b82f6') +
+      renderProgressBar('Anglais (Obj. 2h/sem)', `${minToHoursText(ws.minsDone.ANGLAIS)} réalisés / ${minToHoursText(ws.minsPlanned.ANGLAIS)} planifiés`, (ws.minsDone.ANGLAIS / 120) * 100, '#8b5cf6') +
+      renderProgressBar('Intelligence Artificielle (Obj. 2h/sem)', `${minToHoursText(ws.minsDone.IA)} réalisés / ${minToHoursText(ws.minsPlanned.IA)} planifiés`, (ws.minsDone.IA / 120) * 100, '#ec4899') +
+      renderProgressBar('Sport (Obj. 2 séances/sem)', `${ws.sportDone} faites / ${ws.sportPlanned} planifiées`, (ws.sportDone / 2) * 100, '#10b981');
+
+    const ym = mon.slice(0, 7);
+    const monthLabel = new Date(Number(ym.slice(0, 4)), Number(ym.slice(5, 7)) - 1, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    document.getElementById('personalMonthLabel').textContent = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
+
+    const mDone = { FRANCAIS: 0, ANGLAIS: 0, IA: 0 };
+    let mSport = 0;
+    state.activities.forEach(a => {
+      if (!a.date.startsWith(ym) || !a.completed) return;
+      const dur = Math.max(0, timeToMin(a.endTime) - timeToMin(a.startTime));
+      if (a.category in mDone) mDone[a.category] += dur;
+      if (a.category === 'SPORT') mSport++;
+    });
+
+    document.getElementById('personalMonthlyProgress').innerHTML =
+      renderProgressBar('Français (Obj. 8h/mois)', `${minToHoursText(mDone.FRANCAIS)} / 8h`, (mDone.FRANCAIS / 480) * 100, '#3b82f6') +
+      renderProgressBar('Anglais (Obj. 8h/mois)', `${minToHoursText(mDone.ANGLAIS)} / 8h`, (mDone.ANGLAIS / 480) * 100, '#8b5cf6') +
+      renderProgressBar('IA (Obj. 8h/mois)', `${minToHoursText(mDone.IA)} / 8h`, (mDone.IA / 480) * 100, '#ec4899') +
+      renderProgressBar('Sport (Obj. 8 séances/mois)', `${mSport} / 8 séances`, (mSport / 8) * 100, '#10b981');
+
+    const fDate = document.getElementById('filterActDate').value;
+    const fCat = document.getElementById('filterActCat').value;
+    const fStatus = document.getElementById('filterActStatus').value;
+
+    const filtered = state.activities
+      .filter(a => {
+        if (fDate && a.date !== fDate) return false;
+        if (fCat !== 'ALL' && a.category !== fCat) return false;
+        if (fStatus === 'PREVU' && a.completed) return false;
+        if (fStatus === 'TERMINE' && !a.completed) return false;
+        return true;
+      })
+      .sort((a, b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime));
+
+    document.getElementById('personalActivitiesList').innerHTML = filtered.length
+      ? filtered.map(renderActivityRowHTML).join('')
+      : `<div style="color:var(--text-muted); font-size:0.86rem; padding:12px 0;">Aucune activité trouvée. Cliquez sur « Générer planning de la semaine » ou « + Nouvelle activité ».</div>`;
+  }
+
+  function renderSettingsView() {
+    document.getElementById('refDateInput').value = state.referenceDate;
+    document.getElementById('refPhaseInput').value = String(state.referencePhase);
+    document.getElementById('sidebarRefInfo').textContent = `Réf : ${formatDateFR(state.referenceDate, false)} (${PHASE_META[state.referencePhase].short})`;
+  }
+
+  function updateLiveTopbar() {
+    const now = new Date();
+    const status = getShiftStatusAt(now);
+    const todayBadge = document.getElementById('topbarTodayBadge');
+    todayBadge.className = `badge ${status.todayInfo.badge}`;
+    todayBadge.textContent = `${status.todayInfo.short}`;
+
+    const cdEl = document.getElementById('topbarCountdown');
+    if (status.active) {
+      const rem = status.active.end - now.getTime();
+      cdEl.innerHTML = `<strong>En service :</strong> fin dans ${formatDurationCountdown(rem)}`;
+    } else if (status.next) {
+      const rem = status.next.start - now.getTime();
+      cdEl.innerHTML = `Prochain service (${escapeHTML(status.next.type)}) dans <strong>${formatDurationCountdown(rem)}</strong>`;
+    } else {
+      cdEl.textContent = 'Aucun service dans les 30 jours';
+    }
+  }
+
+  function renderAll() {
+    applyTheme();
+    renderSettingsView();
+    renderDashboard();
+    renderWorkView();
+    renderAcademicView();
+    renderPersonalView();
+    updateLiveTopbar();
+  }
+
+  /* ============================================================================
+     NAVIGATION, THÈME, EXPORT & ÉCOUTEURS
+     ============================================================================ */
+  window.switchView = function(viewName) {
+    uiState.currentView = viewName;
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(`view-${viewName}`).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === viewName);
+    });
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  };
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', state.theme);
+    document.getElementById('themeToggleBtn').textContent = state.theme === 'dark' ? '☀️ Clair' : '🌙 Sombre';
+  }
+
+  function showToast(msg, type = 'info') {
+    const box = document.getElementById('toastContainer');
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.textContent = msg;
+    box.appendChild(el);
+    setTimeout(() => { el.remove(); }, 4200);
+  }
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  });
+
+  document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebarOverlay').classList.add('open');
+  });
+  document.getElementById('sidebarOverlay').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  });
+
+  document.getElementById('themeToggleBtn').addEventListener('click', () => {
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    saveState();
+    applyTheme();
+  });
+
+  document.getElementById('quickAddActivityBtn').addEventListener('click', () => openActivityModal());
+
+  document.getElementById('workModeMonthBtn').addEventListener('click', () => { uiState.workMode = 'month'; renderWorkView(); });
+  document.getElementById('workModeYearBtn').addEventListener('click', () => { uiState.workMode = 'year'; renderWorkView(); });
+  document.getElementById('prevMonthBtn').addEventListener('click', () => {
+    uiState.calMonth--;
+    if (uiState.calMonth < 0) { uiState.calMonth = 11; uiState.calYear--; }
+    renderWorkView();
+  });
+  document.getElementById('nextMonthBtn').addEventListener('click', () => {
+    uiState.calMonth++;
+    if (uiState.calMonth > 11) { uiState.calMonth = 0; uiState.calYear++; }
+    renderWorkView();
+  });
+  document.getElementById('todayMonthBtn').addEventListener('click', () => {
+    const d = new Date();
+    uiState.calYear = d.getFullYear();
+    uiState.calMonth = d.getMonth();
+    renderWorkView();
+  });
+  document.getElementById('prevYearBtn').addEventListener('click', () => { uiState.calYear--; renderWorkView(); });
+  document.getElementById('nextYearBtn').addEventListener('click', () => { uiState.calYear++; renderWorkView(); });
+
+  document.getElementById('academicMonthFilter').addEventListener('change', e => {
+    if (e.target.value) { uiState.academicMonth = e.target.value; renderAcademicView(); }
+  });
+  document.getElementById('academicConflictFilter').addEventListener('change', renderAcademicView);
+  document.getElementById('addFsModuleBtn').addEventListener('click', () => {
+    const title = prompt('Nom du nouveau module Full Stack (ex : Docker & CI/CD) :');
+    if (title && title.trim()) {
+      state.fsModules.push({ id: uid(), title: title.trim(), progress: 0 });
+      saveState();
+      renderAcademicView();
+    }
+  });
+
+  document.getElementById('generateWeekPlanBtn').addEventListener('click', () => generateSmartWeekPlan(uiState.selectedWeekMonday));
+  document.getElementById('dashAutoPlanBtn').addEventListener('click', () => generateSmartWeekPlan(getMondayOfWeek(TODAY_YMD)));
+  document.getElementById('prevWeekBtn').addEventListener('click', () => { uiState.selectedWeekMonday = addDays(uiState.selectedWeekMonday, -7); renderPersonalView(); });
+  document.getElementById('nextWeekBtn').addEventListener('click', () => { uiState.selectedWeekMonday = addDays(uiState.selectedWeekMonday, 7); renderPersonalView(); });
+  document.getElementById('currWeekBtn').addEventListener('click', () => { uiState.selectedWeekMonday = getMondayOfWeek(TODAY_YMD); renderPersonalView(); });
+
+  ['filterActDate', 'filterActCat', 'filterActStatus'].forEach(id => {
+    document.getElementById(id).addEventListener('change', renderPersonalView);
+  });
+  document.getElementById('resetActFiltersBtn').addEventListener('click', () => {
+    document.getElementById('filterActDate').value = '';
+    document.getElementById('filterActCat').value = 'ALL';
+    document.getElementById('filterActStatus').value = 'ALL';
+    renderPersonalView();
+  });
+
+  document.getElementById('referenceForm').addEventListener('submit', e => {
+    e.preventDefault();
+    state.referenceDate = document.getElementById('refDateInput').value;
+    state.referencePhase = Number(document.getElementById('refPhaseInput').value);
+    saveState();
+    renderAll();
+    showToast('Cycle douanier recalculé avec succès !', 'success');
+  });
+
+  document.getElementById('exportJsonBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `smart-life-planner-${TODAY_YMD}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('importJsonInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        state = { ...getDefaultState(), ...imported };
+        saveState();
+        renderAll();
+        showToast('Données importées avec succès !', 'success');
+      } catch {
+        showToast('Fichier JSON invalide.', 'danger');
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById('resetAllDataBtn').addEventListener('click', () => {
+    if (confirm('Voulez-vous vraiment réinitialiser toutes vos données locales ?')) {
+      state = getDefaultState();
+      saveState();
+      renderAll();
+      showToast('Application réinitialisée.', 'warning');
+    }
+  });
+
+  /* ============================================================================
+     SUITE DE TESTS AUTOMATISÉS
+     ============================================================================ */
+  function runSelfTests() {
+    const snapshot = JSON.stringify(state);
+    const results = [];
+    function assert(name, cond) {
+      results.push({ name, pass: Boolean(cond) });
+    }
+
+    try {
+      state.referenceDate = '2026-11-25';
+      state.referencePhase = 0;
+      state.overrides = {};
+      state.courseStatuses = {};
+      state.activities = [];
+
+      assert('J-1 (Mar 24/11) = Repos 2', getDayShiftInfo('2026-11-24').effectiveType === 'REPOS_2');
+      assert('J0 (Mer 25/11) = Service Jour', getDayShiftInfo('2026-11-25').effectiveType === 'JOUR');
+      assert('J+1 (Jeu 26/11) = Service Nuit (21h)', getDayShiftInfo('2026-11-26').effectiveType === 'NUIT');
+      assert('J+2 (Ven 27/11) = Repos 1 (Post-nuit)', getDayShiftInfo('2026-11-27').effectiveType === 'REPOS_1');
+      assert('J+2 matin 00h-09h bloqué par nuit veille', getDayShiftInfo('2026-11-27').prevHadNightShift === true);
+      assert('J+3 (Sam 28/11) = Repos 2', getDayShiftInfo('2026-11-28').effectiveType === 'REPOS_2');
+      assert('J+4 (Dim 29/11) = Reprise Jour', getDayShiftInfo('2026-11-29').effectiveType === 'JOUR');
+
+      const cMon = evaluateCourseForDate('2026-11-30');
+      assert('Lun 30/11 (Nuit à 21h) = Conflit détecté', cMon.hasConflict === true);
+
+      const cTue = evaluateCourseForDate('2026-12-01');
+      assert('Mar 01/12 (Post-nuit) = Après service de nuit', cTue.compatibility === 'APRES_NUIT' && cTue.hasConflict === false);
+
+      const cMonDay = evaluateCourseForDate('2026-12-07');
+      assert('Lun 07/12 (Jour 09h-21h) = Conflit direct', cMonDay.compatibility === 'CONFLIT' && cMonDay.hasConflict === true);
+
+      state.overrides['2026-12-07'] = 'CONGE';
+      assert('Congé sur Lun 07/12 = Sans conflit', evaluateCourseForDate('2026-12-07').compatibility === 'SANS_CONFLIT');
+
+      assert('Interdit planifier 14h-15h pendant Jour (25/11)', validateActivitySlot('2026-11-25', '14:00', '15:00', 'FRANCAIS').valid === false);
+      assert('Interdit planifier 21h30-22h30 pendant Nuit (26/11)', validateActivitySlot('2026-11-26', '21:30', '22:30', 'ANGLAIS').valid === false);
+      assert('Interdit planifier 07h-08h pendant sortie de nuit (27/11)', validateActivitySlot('2026-11-27', '07:00', '08:00', 'IA').valid === false);
+      assert('Autorisé planifier 10h-11h en Repos 2 (28/11)', validateActivitySlot('2026-11-28', '10:00', '11:00', 'IA').valid === true);
+    } finally {
+      state = JSON.parse(snapshot);
+    }
+
+    const passed = results.filter(r => r.pass).length;
+    document.getElementById('testResultsBox').innerHTML = `
+      <div class="alert ${passed === results.length ? 'alert-success' : 'alert-danger'}" style="margin-bottom:10px;">
+        <strong>Résultat : ${passed} / ${results.length} tests réussis</strong>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        ${results.map(r => `<div>${r.pass ? '✅' : '❌'} ${escapeHTML(r.name)}</div>`).join('')}
+      </div>
+    `;
+  }
+
+  document.getElementById('runTestsBtn').addEventListener('click', runSelfTests);
+
+  /* ============================================================================
+     INITIALISATION
+     ============================================================================ */
+  renderAll();
+  setInterval(updateLiveTopbar, 1000);
+})();
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => {
+        console.warn('Service Worker non enregistré:', err);
+      });
+    });
+  }
+</script>
+</body>
+</html>
