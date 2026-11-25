@@ -1,8 +1,0 @@
-{
-  "name": "smart-life-planner",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {"test": "node --test", "start": "python3 -m http.server 8080"},
-  "description": "Planner personnel, professionnel et académique basé sur un cycle douanier de 5 jours"
-}
